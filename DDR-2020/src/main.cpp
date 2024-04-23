@@ -1,9 +1,11 @@
 #include <Arduino.h>
+#include "Clock_utils.h"
 #include "Timer_utils.h"
 
 #define MAIN_LOOP_FREQ 100.0
 
 Timer_utils timer(MAIN_LOOP_FREQ);
+Clock_utils clock;
 
 void init_motors();
 void command_motors(float pwm_1, float pwm_2);
@@ -12,13 +14,13 @@ void command_motor_2(float pwm_2);
 void init_encoder_interrupt();
 void init_encoders();
 
-#define MOTOR_1_PIN_A   4
-#define MOTOR_1_PIN_B   5
-#define MOTOR_1_PIN_PWM 6
+#define MOTOR_1_PIN_A   8
+#define MOTOR_1_PIN_B   9
+#define MOTOR_1_PIN_PWM 7
 
-#define MOTOR_2_PIN_A   8
-#define MOTOR_2_PIN_B   9
-#define MOTOR_2_PIN_PWM 7
+#define MOTOR_2_PIN_A   4
+#define MOTOR_2_PIN_B   5
+#define MOTOR_2_PIN_PWM 6
 
 #define ENC_1_PIN_A 18
 #define ENC_1_PIN_B 19
@@ -29,7 +31,8 @@ volatile long count1 = 0;
 volatile long count2 = 0;
 
 void setup() {
-  timer.init(250);
+  clock.init();
+  timer.init(100);
   Serial.begin(9600);
   init_encoders();
   init_motors();
@@ -37,9 +40,14 @@ void setup() {
 }
 
 void loop() {
+  command_motors(0, 0);
+  Serial.print(count1);
+  Serial.print(", ");
+  Serial.print(count2);
+  Serial.print(", ");
+  Serial.println(clock.get_t_now_s(),2);
   timer.sleep();
 }
-
 
 void init_encoder_interrupt(){
   //interrupt [2,3,4,5]->[19,18,2,3]
@@ -59,41 +67,40 @@ ISR(INT2_vect){
   
   if(a1==1){
     if(b1==1){
-      count1++;
+      count1--;
     }
     else{
-      count1--;
+      count1++;
     }
   }
   else{
     if(b1==0){
-      count1++;
+      count1--;
     }
     else{
-      count1--;
+      count1++;
     }
   }
 }
 
-ISR(INT3_vect)
-{
+ISR(INT3_vect){
   int a1 = digitalRead(ENC_1_PIN_A);
   int b1 = digitalRead(ENC_1_PIN_B);
   
   if(b1==1){
     if(a1==0){
-      count1++;
+      count1--;
     }
     else{
-      count1--;
+      count1++;
     }
   }
   else{
     if(a1==1){
-      count1++;
+      count1--;
     }
     else{
-      count1--;
+      count1++;
     }
   }
 }
@@ -154,26 +161,26 @@ void init_motors(){
 
 void command_motor_1(float pwm_1){
   if(pwm_1<0){
-    digitalWrite(MOTOR_1_PIN_A,1);
-    digitalWrite(MOTOR_1_PIN_B,0);
+    digitalWrite(MOTOR_1_PIN_A,0);
+    digitalWrite(MOTOR_1_PIN_B,1);
     analogWrite(MOTOR_1_PIN_PWM,(int)(-1*pwm_1));
   }
   else{
-    digitalWrite(MOTOR_1_PIN_A,0);
-    digitalWrite(MOTOR_1_PIN_B,1);
+    digitalWrite(MOTOR_1_PIN_A,1);
+    digitalWrite(MOTOR_1_PIN_B,0);
     analogWrite(MOTOR_1_PIN_PWM,(int)pwm_1);
   }
 }
 
 void command_motor_2(float pwm_2){
   if(pwm_2<0){
-    digitalWrite(MOTOR_2_PIN_A,1);
-    digitalWrite(MOTOR_2_PIN_B,0);
+    digitalWrite(MOTOR_2_PIN_A,0);
+    digitalWrite(MOTOR_2_PIN_B,1);
     analogWrite(MOTOR_2_PIN_PWM,(int)(-1*pwm_2));
   }
   else{
-    digitalWrite(MOTOR_2_PIN_A,0);
-    digitalWrite(MOTOR_2_PIN_B,1);
+    digitalWrite(MOTOR_2_PIN_A,1);
+    digitalWrite(MOTOR_2_PIN_B,0);
     analogWrite(MOTOR_2_PIN_PWM,(int)pwm_2);
   }
 }

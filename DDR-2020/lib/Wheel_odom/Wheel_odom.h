@@ -13,7 +13,7 @@
 class Wheel_odom{
     public:
         Wheel_odom();
-        void set_ddr_param(long N_, double r_, double L_);
+        void set_param(long N_, double r_, double L_);
         void set_dt(double dt_);
         long get_PPR();
         double get_r();
@@ -22,7 +22,7 @@ class Wheel_odom{
         void get_w_LR(double* wl, double* wr);
         void get_vw(double* vc, double* wc);
         void get_xyth(double* xc, double* yc, double* thc);
-        void update_odom(long nl, long nr);
+        void update(long nl, long nr);
 
     private:
         unsigned long N = 133600;

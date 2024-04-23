@@ -3,7 +3,7 @@
 Wheel_odom::Wheel_odom(){
 }
 
-void Wheel_odom::set_ddr_param(long N_, double r_, double L_){
+void Wheel_odom::set_param(long N_, double r_, double L_){
     N = N_;
     r = r_;
     L = L_;
@@ -45,7 +45,7 @@ void Wheel_odom::get_xyth(double* xc, double* yc, double* thc){
     *thc = th;
 }
 
-void Wheel_odom::update_odom(long nl, long nr){
+void Wheel_odom::update(long nl, long nr){
     N_L = nl;
     N_R = nr;
     w_L = TWO_PI*(double)(N_L - N_L_pre)/((double)N*dt);
