@@ -3,18 +3,28 @@
 Clock_utils::Clock_utils(){
 }
 
-float Clock_utils::get_t_now_millis(){
-    return millis() - t_init_millis;
-}
-
-float Clock_utils::get_t_now_micros(){
-    return micros() - t_init_micros;
-}
-
-void Clock_utils::init_once(){
+void Clock_utils::init(){
     if(start==true){
-        t_init_micros = micros();
-        t_init_millis = t_init_micros/1000.0;
+        t_init_us = micros();
+        t_init_ms = t_init_us/1000.0;
         start = false;
     }
+}
+
+double Clock_utils::get_t_now_s(){
+    return ((double)(micros() - t_init_us)) / 1000000.0;
+}
+
+double Clock_utils::get_t_now_ms(){
+    return (double)(millis() - t_init_ms);
+}
+
+double Clock_utils::get_t_now_us(){
+    return (double)(micros() - t_init_us);
+}
+
+void Clock_utils::reset(){
+    t_init_us = micros();
+    t_init_ms = t_init_us/1000.0;
+    start = false;
 }

@@ -6,13 +6,15 @@
 class Clock_utils{
     public:
         Clock_utils();
-        float get_t_now_millis();
-        float get_t_now_micros();
-        void init_once();
+        void init();
+        double get_t_now_s();
+        double get_t_now_ms();
+        double get_t_now_us();
+        void reset();
     private:
-        float t_init_micros = 0.0;
-        float t_init_millis = 0.0;
-        float t_now = 0.0;
+        unsigned long t_init_us = 0;
+        unsigned long t_init_ms = 0;
+        double t_now_s = 0;
         bool start = true;
 };
 
