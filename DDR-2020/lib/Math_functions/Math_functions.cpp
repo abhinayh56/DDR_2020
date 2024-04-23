@@ -226,10 +226,10 @@ void Circle::intersection_line(float cx, float cy, float r, float x1, float y1, 
     *y20 = y1 + lambda_2*(y2-y1);
   }
   else{
-    *x10 = math_inf;
-    *y10 = math_inf;
-    *x20 = -math_inf;
-    *y20 = -math_inf;
+    *x10 = const_math_inf;
+    *y10 = const_math_inf;
+    *x20 = -const_math_inf;
+    *y20 = -const_math_inf;
   }
 }
 

@@ -7,6 +7,7 @@
 
 Timer_utils timer(MAIN_LOOP_FREQ);
 Clock_utils clock;
+Wheel_odom wheel_odom;
 
 void init_motors();
 void command_motors(float pwm_1, float pwm_2);
@@ -28,12 +29,19 @@ void init_encoders();
 #define ENC_2_PIN_A 2
 #define ENC_2_PIN_B 3
 
+#define ENC_1_CPR 1700
+#define ENC_2_CPR 1700
+#define WHEEL_R 0.0425
+#define WHEEL_L 0.2
+
 volatile long count1 = 0;
 volatile long count2 = 0;
 
 void setup() {
+  wheel_odom.set_param(ENC_1_CPR, WHEEL_R, WHEEL_L);
+  wheel_odom.set_dt(1.0/MAIN_LOOP_FREQ);
   clock.init();
-  timer.init(100);
+  timer.init(MAIN_LOOP_FREQ);
   Serial.begin(9600);
   init_encoders();
   init_motors();
@@ -42,11 +50,23 @@ void setup() {
 
 void loop() {
   command_motors(0, 0);
+  
+  double x_c, y_c, th_c;
+  wheel_odom.update(count1, count2);
+  wheel_odom.get_pose(&x_c, &y_c, &th_c);
+
+  Serial.print(clock.get_t_now_s(),2);
+  Serial.print(", ");
   Serial.print(count1);
   Serial.print(", ");
   Serial.print(count2);
   Serial.print(", ");
-  Serial.println(clock.get_t_now_s(),2);
+  Serial.print(x_c*100.0);
+  Serial.print(", ");
+  Serial.print(y_c*100.0);
+  Serial.print(", ");
+  Serial.println(th_c*180.0/(22.0/7.0));
+  
   timer.sleep();
 }
 

@@ -39,25 +39,25 @@ void Wheel_odom::get_vw(double* vc, double* wc){
     *wc = w;
 }
 
-void Wheel_odom::get_xyth(double* xc, double* yc, double* thc){
+void Wheel_odom::get_pose(double* xc, double* yc, double* thc){
     *xc = x;
     *yc = y;
     *thc = th;
 }
 
-void Wheel_odom::update(long nl, long nr){
+void Wheel_odom::update(long nr, long nl){
     N_L = nl;
     N_R = nr;
-    w_L = TWO_PI*(double)(N_L - N_L_pre)/((double)N*dt);
-    w_R = TWO_PI*(double)(N_R - N_R_pre)/((double)N*dt);
+    w_L = const_math_2pi*(double)(N_L - N_L_pre)/((double)N*dt);
+    w_R = const_math_2pi*(double)(N_R - N_R_pre)/((double)N*dt);
     v = (r/2.0)*(w_L+w_R);
     w = (r/L)*(w_R-w_L);
 
-    double dl = (PI*r*(double)((N_R-N_R_pre) + (N_L-N_L_pre)))/((double)N);
-    double dth = (TWO_PI*r*(double)((N_R-N_R_pre) - (N_L-N_L_pre)))/((double)N*L);
+    double dl = (const_math_pi*r*(double)((N_R-N_R_pre) + (N_L-N_L_pre)))/((double)N);
+    double dth = (const_math_2pi*r*(double)((N_R-N_R_pre) - (N_L-N_L_pre)))/((double)N*L);
 
     th += dth;
-    th = math.wrap(th,-PI,PI);
+    th = math.wrap(th,-const_math_pi,const_math_pi);
     x += dl*cos(th);
     y += dl*sin(th);
 
