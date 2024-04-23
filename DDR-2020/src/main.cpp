@@ -29,7 +29,7 @@ volatile long count1 = 0;
 volatile long count2 = 0;
 
 void setup() {
-  timer.init();
+  timer.init(250);
   Serial.begin(9600);
   init_encoders();
   init_motors();
@@ -37,7 +37,7 @@ void setup() {
 }
 
 void loop() {
-  delay(10);
+  timer.pause();
 }
 
 
