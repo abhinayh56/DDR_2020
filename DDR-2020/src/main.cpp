@@ -1,35 +1,34 @@
 #include <Arduino.h>
 
-unsigned long t;
-float f = 15;
-float dt = 1.0/f;
-int loop_timer = (float)dt*1000000;
-float timer = 0;
+void init_motors();
+void command_motors(float pwm_1, float pwm_2);
+void command_motor_1(float pwm_1);
+void command_motor_2(float pwm_2);
+void init_encoder_interrupt();
+void init_encoders();
 
-void initialize_interrupt();
-void command_motor1(float pwm1);
-void command_motor2(float pwm2);
+#define MOTOR_1_PIN_A   4
+#define MOTOR_1_PIN_B   5
+#define MOTOR_1_PIN_PWM 6
 
-#define A1 18
-#define B1 19
-#define A2 2
-#define B2 3
+#define MOTOR_2_PIN_A   8
+#define MOTOR_2_PIN_B   9
+#define MOTOR_2_PIN_PWM 7
+
+#define ENC_1_PIN_A 18
+#define ENC_1_PIN_B 19
+#define ENC_2_PIN_A 2
+#define ENC_2_PIN_B 3
 
 volatile long count1 = 0;
 volatile long count2 = 0;
 
 void setup() {
   Serial.begin(9600);
+  init_encoders();
+  init_motors();
+  command_motors(0, 0);
 
-  pinMode(4,OUTPUT);
-  pinMode(5,OUTPUT);
-  pinMode(6,OUTPUT);
-
-  pinMode(7,OUTPUT);
-  pinMode(8,OUTPUT);
-  pinMode(9,OUTPUT);
-
-  initialize_interrupt();
 }
 
 void loop() {
@@ -37,8 +36,7 @@ void loop() {
 }
 
 
-void initialize_interrupt()
-{
+void init_encoder_interrupt(){
   //interrupt [2,3,4,5]->[19,18,2,3]
   EICRA = (1 << ISC20) | (1 << ISC30);
   EICRB = (1 << ISC40) | (1 << ISC50);
@@ -46,9 +44,13 @@ void initialize_interrupt()
   sei();
 }
 
+void init_encoders(){
+  init_encoder_interrupt();
+}
+
 ISR(INT2_vect){
-  int a1 = digitalRead(A1);
-  int b1 = digitalRead(B1);
+  int a1 = digitalRead(ENC_1_PIN_A);
+  int b1 = digitalRead(ENC_1_PIN_B);
   
   if(a1==1){
     if(b1==1){
@@ -70,8 +72,8 @@ ISR(INT2_vect){
 
 ISR(INT3_vect)
 {
-  int a1 = digitalRead(A1);
-  int b1 = digitalRead(B1);
+  int a1 = digitalRead(ENC_1_PIN_A);
+  int b1 = digitalRead(ENC_1_PIN_B);
   
   if(b1==1){
     if(a1==0){
@@ -92,8 +94,8 @@ ISR(INT3_vect)
 }
 
 ISR(INT4_vect){
-  int a2 = digitalRead(A2);
-  int b2 = digitalRead(B2);
+  int a2 = digitalRead(ENC_2_PIN_A);
+  int b2 = digitalRead(ENC_2_PIN_B);
   
   if(a2==1){
     if(b2==1){
@@ -114,8 +116,8 @@ ISR(INT4_vect){
 }
 
 ISR(INT5_vect){
-  int a2 = digitalRead(A2);
-  int b2 = digitalRead(B2);
+  int a2 = digitalRead(ENC_2_PIN_A);
+  int b2 = digitalRead(ENC_2_PIN_B);
   
   if(b2==1){
     if(a2==0){
@@ -135,34 +137,43 @@ ISR(INT5_vect){
   }
 }
 
-void command_motor1(float pwm1)
-{
-  if(pwm1<0)
-  {
-    digitalWrite(4,1);
-    digitalWrite(5,0);
-    analogWrite(6,(int)(-1*pwm1));
+void init_motors(){
+  pinMode(MOTOR_1_PIN_A, OUTPUT);
+  pinMode(MOTOR_1_PIN_B, OUTPUT);
+  pinMode(MOTOR_1_PIN_PWM, OUTPUT);
+
+  pinMode(MOTOR_2_PIN_A, OUTPUT);
+  pinMode(MOTOR_2_PIN_B, OUTPUT);
+  pinMode(MOTOR_2_PIN_PWM, OUTPUT);
+}
+
+void command_motor_1(float pwm_1){
+  if(pwm_1<0){
+    digitalWrite(MOTOR_1_PIN_A,1);
+    digitalWrite(MOTOR_1_PIN_B,0);
+    analogWrite(MOTOR_1_PIN_PWM,(int)(-1*pwm_1));
   }
-  else
-  {
-    digitalWrite(4,0);
-    digitalWrite(5,1);
-    analogWrite(6,(int)pwm1);
+  else{
+    digitalWrite(MOTOR_1_PIN_A,0);
+    digitalWrite(MOTOR_1_PIN_B,1);
+    analogWrite(MOTOR_1_PIN_PWM,(int)pwm_1);
   }
 }
 
-void command_motor2(float pwm2)
-{
-  if(pwm2<0)
-  {
-    digitalWrite(8,1);
-    digitalWrite(9,0);
-    analogWrite(7,(int)(-1*pwm2));
+void command_motor_2(float pwm_2){
+  if(pwm_2<0){
+    digitalWrite(MOTOR_2_PIN_A,1);
+    digitalWrite(MOTOR_2_PIN_B,0);
+    analogWrite(MOTOR_2_PIN_PWM,(int)(-1*pwm_2));
   }
-  else
-  {
-    digitalWrite(8,0);
-    digitalWrite(9,1);
-    analogWrite(7,(int)pwm2);
+  else{
+    digitalWrite(MOTOR_2_PIN_A,0);
+    digitalWrite(MOTOR_2_PIN_B,1);
+    analogWrite(MOTOR_2_PIN_PWM,(int)pwm_2);
   }
+}
+
+void command_motors(float pwm_1, float pwm_2){
+  command_motor_1(pwm_1);
+  command_motor_2(pwm_2);
 }
