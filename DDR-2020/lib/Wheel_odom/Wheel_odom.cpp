@@ -29,12 +29,12 @@ double Wheel_odom::get_dt(){
     return dt;
 }
 
-void Wheel_odom::get_w_LR(double* wl, double* wr){
-    *wl = w_L;
+void Wheel_odom::get_wheel_speed(double* wr, double* wl){
     *wr = w_R;
+    *wl = w_L;
 }
 
-void Wheel_odom::get_vw(double* vc, double* wc){
+void Wheel_odom::get_twist(double* vc, double* wc){
     *vc = v;
     *wc = w;
 }

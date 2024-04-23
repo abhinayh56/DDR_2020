@@ -12,8 +12,8 @@ class Wheel_odom{
         double get_r();
         double get_L();
         double get_dt();
-        void get_w_LR(double* wl, double* wr);
-        void get_vw(double* vc, double* wc);
+        void get_wheel_speed(double* wr, double* wl);
+        void get_twist(double* vc, double* wc);
         void get_pose(double* xc, double* yc, double* thc);
         void update(long nr, long nl);
 

@@ -49,23 +49,32 @@ void setup() {
 }
 
 void loop() {
-  command_motors(0, 0);
+  command_motors(255, 255);
   
-  double x_c, y_c, th_c;
+  double x_c, y_c, th_c, v_c, w_c, w_L, w_R;
   wheel_odom.update(count1, count2);
   wheel_odom.get_pose(&x_c, &y_c, &th_c);
+  wheel_odom.get_twist(&v_c, &w_c);
+  wheel_odom.get_wheel_speed(&w_R, &w_L);
 
   Serial.print(clock.get_t_now_s(),2);
   Serial.print(", ");
-  Serial.print(count1);
+  // Serial.print(count1);
+  // Serial.print(", ");
+  // Serial.print(count2);
+  // Serial.print(", ");
+  // Serial.print(x_c*100.0);
+  // Serial.print(", ");
+  // Serial.print(y_c*100.0);
+  // Serial.print(", ");
+  // Serial.print(th_c*180.0/(22.0/7.0));
+  // Serial.print(w_R);
+  // Serial.print(", ");
+  // Serial.print(w_R);
+  // Serial.print(", ");
+  Serial.print(v_c);
   Serial.print(", ");
-  Serial.print(count2);
-  Serial.print(", ");
-  Serial.print(x_c*100.0);
-  Serial.print(", ");
-  Serial.print(y_c*100.0);
-  Serial.print(", ");
-  Serial.println(th_c*180.0/(22.0/7.0));
+  Serial.println(w_c);
   
   timer.sleep();
 }
