@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Clock_utils.h"
 #include "Timer_utils.h"
+#include "Wheel_odom.h"
 
 #define MAIN_LOOP_FREQ 100.0
 
