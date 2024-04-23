@@ -28,7 +28,6 @@ void setup() {
   init_encoders();
   init_motors();
   command_motors(0, 0);
-
 }
 
 void loop() {
