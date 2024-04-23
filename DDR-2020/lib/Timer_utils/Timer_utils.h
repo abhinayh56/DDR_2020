@@ -5,8 +5,8 @@
 
 class Timer_utils{
     public:
-        Timer_utils(double freq_);
-        void init(double freq_);
+        Timer_utils(double freq_=100.0);
+        void init(double freq_=100.0);
         unsigned long get_t_now_micros();
         unsigned long get_t_now_millis();
         double get_timer_freq();

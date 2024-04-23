@@ -1,4 +1,9 @@
 #include <Arduino.h>
+#include "Timer_utils.h"
+
+#define MAIN_LOOP_FREQ 100.0
+
+Timer_utils timer(MAIN_LOOP_FREQ);
 
 void init_motors();
 void command_motors(float pwm_1, float pwm_2);
@@ -24,6 +29,7 @@ volatile long count1 = 0;
 volatile long count2 = 0;
 
 void setup() {
+  timer.init();
   Serial.begin(9600);
   init_encoders();
   init_motors();
