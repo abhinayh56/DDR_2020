@@ -1,3 +1,6 @@
 [submodule "DDR-2020/lib/wheeled_mobile_robot_cpp"]
 	path = DDR-2020/lib/wheeled_mobile_robot_cpp
 	url = https://github.com/abhinayh56/wheeled_mobile_robot_cpp.git
+[submodule "DDR-2020/lib/Math_cpp"]
+	path = DDR-2020/lib/Math_cpp
+	url = https://github.com/abhinayh56/Math_cpp.git
