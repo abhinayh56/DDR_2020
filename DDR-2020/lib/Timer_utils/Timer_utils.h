@@ -12,7 +12,7 @@ class Timer_utils{
         double get_timer_freq();
         unsigned long get_time_us();
         double get_dt();
-        void pause();
+        void sleep();
         unsigned long get_t_last_micros();
         void set_t_last_micros();
 

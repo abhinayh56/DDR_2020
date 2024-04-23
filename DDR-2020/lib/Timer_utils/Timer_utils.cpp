@@ -33,7 +33,7 @@ double Timer_utils::get_dt(){
     return dt;
 }
 
-void Timer_utils::pause(){
+void Timer_utils::sleep(){
     while((micros() - t_last_us) < loop_time_us){};
     t_last_us = micros();
 }

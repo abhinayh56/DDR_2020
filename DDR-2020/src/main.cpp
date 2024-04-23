@@ -37,7 +37,7 @@ void setup() {
 }
 
 void loop() {
-  timer.pause();
+  timer.sleep();
 }
 
 
