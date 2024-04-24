@@ -9,6 +9,7 @@
 Timer_utils timer(MAIN_LOOP_FREQ);
 Clock_utils clock;
 Wheel_odom wheel_odom;
+Diff_drive_unicycle ddr_uni;
 
 void init_motors();
 void command_motors(float pwm_1, float pwm_2);
@@ -35,31 +36,66 @@ void init_encoders();
 #define WHEEL_R 0.0425
 #define WHEEL_L 0.2
 
+#define V_C_MAX 1.0
+#define W_C_MAX 1.0
+#define V_BAT_MAX 12.0
+#define PWM_MAX 255.0
+
 volatile long count1 = 0;
 volatile long count2 = 0;
 
+double x, y, th, v, w;
+double v_0, w_0;
+
+double w_R, w_L;
+double w_R_0, w_L_0;
+
+float V_R, V_L;
+float PWM_R, PWM_L;
+
+enum Mode{
+  unicycle = 0,
+  differential_drive = 1
+};
+
+Mode mode;
+
 void setup() {
+  Serial.begin(9600);
   wheel_odom.set_param(ENC_1_CPR, WHEEL_R, WHEEL_L);
   wheel_odom.set_dt(1.0/MAIN_LOOP_FREQ);
+  ddr_uni.set_param(WHEEL_R, WHEEL_L);
+  ddr_uni.set_v_max(V_C_MAX);
+  ddr_uni.set_w_max(W_C_MAX);
   clock.init();
   timer.init(MAIN_LOOP_FREQ);
-  Serial.begin(9600);
   init_encoders();
   init_motors();
   command_motors(0, 0);
 }
 
 void loop() {
-  command_motors(255, 255);
-  
-  double x_c, y_c, th_c, v_c, w_c, w_L, w_R;
+  // 0. Odometry
   wheel_odom.update(count1, count2);
-  wheel_odom.get_pose(&x_c, &y_c, &th_c);
-  wheel_odom.get_twist(&v_c, &w_c);
+  wheel_odom.get_pose(&x, &y, &th);
+  wheel_odom.get_twist(&v, &w);
   wheel_odom.get_wheel_speed(&w_R, &w_L);
 
-  Serial.print(clock.get_t_now_s(),2);
-  Serial.print(", ");
+  // 1. communication
+
+  // 2. v_0, w_0 --> w_R_0, w_L_0
+  ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
+
+  // 3. w_R_0, w_L_0 --> V_R, V_L
+
+  // 4. V_R, V_L --> PWM_R, PWM_L
+  PWM_R = (PWM_MAX / V_BAT_MAX) * V_R;
+  PWM_L = (PWM_MAX / V_BAT_MAX) * V_L;
+
+  command_motors(PWM_R, PWM_L);
+
+  // Serial.print(clock.get_t_now_s(),2);
+  // Serial.print(", ");
   // Serial.print(count1);
   // Serial.print(", ");
   // Serial.print(count2);
@@ -73,9 +109,9 @@ void loop() {
   // Serial.print(", ");
   // Serial.print(w_R);
   // Serial.print(", ");
-  Serial.print(v_c);
-  Serial.print(", ");
-  Serial.println(w_c);
+  // Serial.print(v);
+  // Serial.print(", ");
+  // Serial.println(w);
   
   timer.sleep();
 }

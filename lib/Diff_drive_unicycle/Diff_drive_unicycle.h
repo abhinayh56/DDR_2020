@@ -5,31 +5,31 @@
 class Diff_drive_unicycle{
     public:
         Diff_drive_unicycle();
-        void set_param(float r_, float L_);
-        void set_v_max(float V_max);
-        void set_w_max(float W_max);
-        float get_v_max();
-        float get_w_max();
-        float get_wlr_max();
-        void set_r(float r_);
-        void set_L(float L_);
-        float get_r();
-        float get_L();
-        void uni2ddr(float Vc, float Wc, float* wr, float* wl);
-        float get_wr(float Vc, float Wc);
-        float get_wl(float Vc, float Wc);
-        void ddr2uni(float wr, float wl, float* Vc, float* Wc);
-        float get_Vc(float wr, float wl);
-        float get_Wc(float wr, float wl);
-        void update_domain_vw(float Vc_in, float Wc_in, float* Vc_out, float* Wc_out);
+        void set_param(double r_, double L_);
+        void set_v_max(double V_max);
+        void set_w_max(double W_max);
+        double get_v_max();
+        double get_w_max();
+        double get_wlr_max();
+        void set_r(double r_);
+        void set_L(double L_);
+        double get_r();
+        double get_L();
+        void uni2ddr(double Vc, double Wc, double* wr, double* wl);
+        double get_wr(double Vc, double Wc);
+        double get_wl(double Vc, double Wc);
+        void ddr2uni(double wr, double wl, double* Vc, double* Wc);
+        double get_Vc(double wr, double wl);
+        double get_Wc(double wr, double wl);
+        void update_domain_vw(double Vc_in, double Wc_in, double* Vc_out, double* Wc_out);
 
     private:
         Math_functions math_fun;
-        float r = 1.0;
-        float L = 1.0;
-        float w_lr_max = 0.0;
-        float V_max = 0.0;
-        float W_max = 0.0;
+        double r = 1.0;
+        double L = 1.0;
+        double w_lr_max = 0.0;
+        double V_max = 0.0;
+        double W_max = 0.0;
 };
 
 #endif
