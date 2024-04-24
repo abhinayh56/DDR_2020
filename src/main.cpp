@@ -106,6 +106,7 @@ void loop() {
   // 1. communication
 
   // 2. v_0, w_0 --> w_R_0, w_L_0
+  ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
   ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
 
   // 3. w_R_0, w_L_0 --> V_R, V_L
