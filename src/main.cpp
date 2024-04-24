@@ -40,7 +40,7 @@ Drive_mode mode;
 
 void setup() {
   Serial.begin(9600);
-  wheel_odom.set_param(ENC_1_CPR, WHEEL_R, WHEEL_L);
+  wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
   wheel_odom.set_dt(1.0/MAIN_LOOP_FREQ);
   ddr_uni.set_param(WHEEL_R, WHEEL_L);
   ddr_uni.set_v_max(V_C_MAX);
@@ -68,8 +68,8 @@ void loop() {
   ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
 
   // 3. w_R_0, w_L_0 --> V_R, V_L
-  V_R = controller_R.cal_u(w_R_0, w_R, false);
-  V_L = controller_L.cal_u(w_L_0, w_L, false);
+  V_R = controller_R.cal_u(w_R_0, w_R, D_FILTER_R);
+  V_L = controller_L.cal_u(w_L_0, w_L, D_FILTER_L);
 
   // 4. V_R, V_L --> PWM_R, PWM_L
   PWM_R = (PWM_MAX / V_BAT_MAX) * V_R;
