@@ -1,7 +1,8 @@
 #include <Arduino.h>
+#include "Wheel_odom.h"
 #include "Clock_utils.h"
 #include "Timer_utils.h"
-#include "Wheel_odom.h"
+#include "PID_controller.h"
 #include "Diff_drive_unicycle.h"
 
 #define MAIN_LOOP_FREQ 100.0
@@ -10,6 +11,7 @@ Timer_utils timer(MAIN_LOOP_FREQ);
 Clock_utils clock;
 Wheel_odom wheel_odom;
 Diff_drive_unicycle ddr_uni;
+PID_controller controller_R, controller_L;
 
 void init_motors();
 void command_motors(float pwm_1, float pwm_2);
@@ -40,6 +42,22 @@ void init_encoders();
 #define W_C_MAX 1.0
 #define V_BAT_MAX 12.0
 #define PWM_MAX 255.0
+
+#define Kp_R    0.0
+#define Ki_R    0.0
+#define Kd_R    0.0
+#define dt_R    1.0/MAIN_LOOP_FREQ
+#define I_max_R V_BAT_MAX*0.95
+#define u_max_R V_BAT_MAX*0.95
+#define fc_R    MAIN_LOOP_FREQ*0.5
+
+#define Kp_L    0.0
+#define Ki_L    0.0
+#define Kd_L    0.0
+#define dt_L    1.0/MAIN_LOOP_FREQ
+#define I_max_L V_BAT_MAX*0.95
+#define u_max_L V_BAT_MAX*0.95
+#define fc_L    MAIN_LOOP_FREQ*0.5
 
 volatile long count1 = 0;
 volatile long count2 = 0;
@@ -72,6 +90,8 @@ void setup() {
   init_encoders();
   init_motors();
   command_motors(0, 0);
+  controller_R.set_param(Kp_R, Ki_R, Kd_R, dt_R, I_max_R, u_max_R, fc_R);
+  controller_L.set_param(Kp_L, Ki_L, Kd_L, dt_L, I_max_L, u_max_L, fc_L);
 }
 
 void loop() {
@@ -87,6 +107,8 @@ void loop() {
   ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
 
   // 3. w_R_0, w_L_0 --> V_R, V_L
+  V_R = controller_R.cal_u(w_R_0, w_R, false);
+  V_L = controller_L.cal_u(w_L_0, w_L, false);
 
   // 4. V_R, V_L --> PWM_R, PWM_L
   PWM_R = (PWM_MAX / V_BAT_MAX) * V_R;
