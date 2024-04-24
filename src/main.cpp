@@ -2,6 +2,7 @@
 #include "Clock_utils.h"
 #include "Timer_utils.h"
 #include "Wheel_odom.h"
+#include "Diff_drive_unicycle.h"
 
 #define MAIN_LOOP_FREQ 100.0
 
