@@ -71,12 +71,12 @@ double w_R_0, w_L_0;
 float V_R, V_L;
 float PWM_R, PWM_L;
 
-enum Mode{
+enum Drive_mode{
   unicycle = 0,
   differential_drive = 1
 };
 
-Mode mode;
+Drive_mode mode;
 
 void setup() {
   Serial.begin(9600);

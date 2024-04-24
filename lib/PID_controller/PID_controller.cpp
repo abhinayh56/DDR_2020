@@ -137,7 +137,7 @@ float PID_controller::cal_u(float x0, float x, bool d_filter_){
 	e_pre = e;
 	u = P + I + D;
 	u = math_fun.saturate(u,-u_max,u_max);
-	float u;
+	return u;
 }
 
 void PID_controller::reset(){
