@@ -25,6 +25,19 @@ void PID_controller::set_param(float Kp_, float Ki_, float Kd_, float dt_, float
 	lpf.set_param(fc,dt);
 }
 
+void PID_controller::set_param(float Kp_, float Ki_, float Kd_, float Kff_, float dt_, float I_max_, float u_max_, float fc_){
+	Kp = Kp_;
+	Ki = Ki_;
+	Kd = Kd_;
+	Kff = Kff_;
+	dt = dt_;
+	I_max = I_max_;
+	u_max = u_max_;
+	fc = fc_;
+	d_filter = true;
+	lpf.set_param(fc,dt);
+}
+
 void PID_controller::get_param(float* Kp_, float* Ki_, float* Kd_, float* dt_, float* I_max_, float* u_max_){
 	*Kp_ = Kp;
 	*Ki_ = Ki;
@@ -44,6 +57,17 @@ void PID_controller::get_param(float* Kp_, float* Ki_, float* Kd_, float* dt_, f
 	*fc_ = fc;
 }
 
+void PID_controller::get_param(float* Kp_, float* Ki_, float* Kd_, float* Kff_, float* dt_, float* I_max_, float* u_max_, float* fc_){
+	*Kp_ = Kp;
+	*Ki_ = Ki;
+	*Kd_ = Kd;
+	*Kff_ = Kff;
+	*dt_ = dt;
+	*I_max_ = I_max;
+	*u_max_ = u_max;
+	*fc_ = fc;
+}
+
 void PID_controller::set_Kp(float Kp_){
 	Kp = Kp_;
 }
@@ -54,6 +78,10 @@ void PID_controller::set_Ki(float Ki_){
 
 void PID_controller::set_Kd(float Kd_){
 	Kd = Kd_;
+}
+
+void PID_controller::set_Kff(float Kff_){
+	Kff = Kff_;
 }
 
 void PID_controller::set_dt(float dt_){
@@ -86,6 +114,10 @@ float PID_controller::get_Ki(){
 
 float PID_controller::get_Kd(){
 	return Kd;
+}
+
+float PID_controller::get_Kff(){
+	return Kff;
 }
 
 float PID_controller::get_dt(){
@@ -129,13 +161,19 @@ float PID_controller::cal_u(float x0, float x, bool d_filter_){
 	P = Kp*e;
 	I = I + Ki*e*dt;
 	I = math_fun.saturate(I,-I_max,I_max);
-	D = Kd*(e - e_pre)/dt;
+	if(start == true){
+		D = 0.0;
+		start = false;
+	}
+	else{
+		D = Kd*(e - e_pre)/dt;
+	}
 	if(d_filter_==true){
 		lpf.cal_y(D);
 		D = lpf.get_y();
 	}
 	e_pre = e;
-	u = P + I + D;
+	u = Kff*x0 + P + I + D;
 	u = math_fun.saturate(u,-u_max,u_max);
 	return u;
 }
@@ -146,4 +184,6 @@ void PID_controller::reset(){
 	I = 0.0;
 	D = 0.0;
 	u = 0.0;
+	start = true;
+	lpf.reset();
 }

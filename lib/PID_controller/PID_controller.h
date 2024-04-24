@@ -2,7 +2,7 @@
 #define PID_CONTROLLER
 
 #include "Math_functions.h"
-#include "Filter.h"
+#include "Filter_LPF.h"
 
 class PID_controller{
 	public:
@@ -10,13 +10,16 @@ class PID_controller{
 
 		void set_param(float Kp_, float Ki_, float Kd_, float dt_, float I_max_, float u_max_);
 		void set_param(float Kp_, float Ki_, float Kd_, float dt_, float I_max_, float u_max_, float fc_);
+		void set_param(float Kp_, float Ki_, float Kd_, float Kff_, float dt_, float I_max_, float u_max_, float fc_);
 
 		void get_param(float* Kp_, float* Ki_, float* Kd_, float* dt_, float* I_max_, float* u_max_);
 		void get_param(float* Kp_, float* Ki_, float* Kd_, float* dt_, float* I_max_, float* u_max_, float* fc_);
+		void get_param(float* Kp_, float* Ki_, float* Kd_, float* Kff_, float* dt_, float* I_max_, float* u_max_, float* fc_);
 
 		void set_Kp(float Kp_);
 		void set_Ki(float Ki_);
 		void set_Kd(float Kd_);
+		void set_Kff(float Kff_);
 		void set_dt(float dt_);
 		void set_I_max(float I_max_);
 		void set_u_max(float u_max_);
@@ -26,6 +29,7 @@ class PID_controller{
 		float get_Kp();
 		float get_Ki();
 		float get_Kd();
+		float get_Kff();
 		float get_dt();
 		float get_I_max();
 		float get_u_max();
@@ -46,6 +50,7 @@ class PID_controller{
 
 		bool d_filter = false;
 
+		float Kff = 0.0;
 		float Kp = 0.0;
 		float Ki = 0.0;
 		float Kd = 0.0;
@@ -59,6 +64,8 @@ class PID_controller{
 		float I = 0.0;
 		float D = 0.0;
 		float u = 0.0;
+
+		bool start = true;
 };
 
 #endif

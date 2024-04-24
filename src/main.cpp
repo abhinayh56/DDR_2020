@@ -46,6 +46,7 @@ void init_encoders();
 #define Kp_R    0.0
 #define Ki_R    0.0
 #define Kd_R    0.0
+#define Kff_R   0.0
 #define dt_R    1.0/MAIN_LOOP_FREQ
 #define I_max_R V_BAT_MAX*0.95
 #define u_max_R V_BAT_MAX*0.95
@@ -54,6 +55,7 @@ void init_encoders();
 #define Kp_L    0.0
 #define Ki_L    0.0
 #define Kd_L    0.0
+#define Kff_L   0.0
 #define dt_L    1.0/MAIN_LOOP_FREQ
 #define I_max_L V_BAT_MAX*0.95
 #define u_max_L V_BAT_MAX*0.95
@@ -90,8 +92,8 @@ void setup() {
   init_encoders();
   init_motors();
   command_motors(0, 0);
-  controller_R.set_param(Kp_R, Ki_R, Kd_R, dt_R, I_max_R, u_max_R, fc_R);
-  controller_L.set_param(Kp_L, Ki_L, Kd_L, dt_L, I_max_L, u_max_L, fc_L);
+  controller_R.set_param(Kp_R, Ki_R, Kd_R, Kff_R, dt_R, I_max_R, u_max_R, fc_R);
+  controller_L.set_param(Kp_L, Ki_L, Kd_L, Kff_L, dt_L, I_max_L, u_max_L, fc_L);
 }
 
 void loop() {
