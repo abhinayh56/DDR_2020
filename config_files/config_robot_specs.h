@@ -9,9 +9,9 @@
 #define V_BAT_MAX 12.0
 #define SAFETY_FACTOR 0.95
 
-#define ENC_PPR 1700
-#define MOT_GEAR_RATIO 1
-#define MOT_SHAFT_CPR (ENC_PPR*MOT_GEAR_RATIO)
+#define ENC_PPR 3
+#define MOT_GEAR_RATIO 141
+#define MOT_SHAFT_CPR (4*ENC_PPR*MOT_GEAR_RATIO) // (PPR*2)*2*N
 #define PWM_MAX 255.0
 
 #endif
