@@ -4,7 +4,7 @@
 #define WHEEL_R 0.0425
 #define WHEEL_L 0.2
 
-#define V_C_MAX 0.6
+#define V_C_MAX 0.61
 #define W_C_MAX 6.0
 #define V_BAT_MAX 12.0
 #define SAFETY_FACTOR 0.95
