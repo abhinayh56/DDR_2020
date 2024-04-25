@@ -34,11 +34,12 @@ float V_R, V_L;
 float PWM_R, PWM_L;
 
 enum Drive_mode{
-  unicycle = 0,
-  differential_drive = 1
+  none = 0,
+  unicycle_drive = 1,
+  differential_drive = 2
 };
 
-Drive_mode mode;
+Drive_mode drive_mode = none;
 
 void setup() {
   Serial.begin(9600);
@@ -57,17 +58,33 @@ void setup() {
 }
 
 void loop() {
-  // 0. Odometry
+  // 1. Odometry
   wheel_odom.update(count1, count2);
   wheel_odom.get_pose(&x, &y, &th);
   wheel_odom.get_twist(&v, &w);
   wheel_odom.get_wheel_speed(&w_R, &w_L);
 
-  // 1. communication
+  // 2.1. send   : x, y, th, v, w
+  // 2.2. receive: receive packet
 
-  // 2. v_0, w_0 --> w_R_0, w_L_0
-  ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
-  ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
+  switch (drive_mode){
+    case (none):
+      w_R_0 = 0.0;
+      w_L_0 = 0.0;
+      break;
+    case (unicycle_drive):
+      // receive: v_0, w_0
+      ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
+      ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
+      break;
+    case (differential_drive):
+      // receive: w_R_0, w_L_0
+      break;
+    default:
+      w_R_0 = 0.0;
+      w_L_0 = 0.0;
+      break;
+  }
 
   // 3. w_R_0, w_L_0 --> V_R, V_L
   V_R = controller_R.cal_u(w_R_0, w_R, D_FILTER_R);
