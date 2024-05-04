@@ -30,18 +30,53 @@ double v_0, w_0;
 double w_R, w_L;
 double w_R_0, w_L_0;
 
-float V_R, V_L;
-float PWM_R, PWM_L;
+double V_R, V_L;
+double PWM_R, PWM_L;
 
 enum Drive_mode{
-  none = 0,
-  unicycle_drive = 1,
-  differential_drive = 2
+  none = 0x00,
+  unicycle_drive = 0x01,
+  differential_drive = 0x02
 };
 
-Drive_mode drive_mode = none;
+uint8_t drive_mode = none;
+
+#pragma pack(push,1)
+struct Rx_packet{
+  uint8_t start = 0x21;
+  uint8_t drive_mode = 0x00;
+  double cmd_1 = 0x00;
+  double cmd_2 = 0x00;
+  uint8_t end = 0x23;
+};
+#pragma pack(pop)
+
+#pragma pack(push,1)
+struct Tx_packet{
+  uint8_t start = 0x21;
+  uint8_t id = 0x00;
+  uint8_t drive_mode = 0x00;
+  double x = 0x00;
+  double y = 0x00;
+  double th = 0x00;
+  double v = 0x00;
+  double w = 0x00;
+  uint8_t end = 0x23;
+};
+#pragma pack(pop)
+
+struct Rx_packet rx_pkt;
+struct Tx_packet tx_pkt;
+
+uint8_t rx_buff[11];
+uint8_t tx_buff[24];
+
+uint8_t pkt_comm_counter = 0;
+uint8_t rx_buff_index = 0;
 
 void setup() {
+  tx_pkt.drive_mode = drive_mode;
+  tx_pkt.id = 0x05;
   Serial.begin(9600);
   wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
   wheel_odom.set_dt(1.0/MAIN_LOOP_FREQ);
@@ -64,20 +99,78 @@ void loop() {
   wheel_odom.get_twist(&v, &w);
   wheel_odom.get_wheel_speed(&w_R, &w_L);
 
-  // 2.1. send   : x, y, th, v, w
-  // 2.2. receive: receive packet
+  // 2.1. receive: receive packet
+  // start_byte, drive_mode, data_1, data_2 end_byte
+  while(Serial.available()){
+    uint8_t data = Serial.read();
+    if(data==0x21){
+      rx_buff_index = 0;
+    }
+    rx_buff[rx_buff_index] = data;
+    rx_buff_index++;
+
+    if(rx_buff_index>10){
+      rx_buff_index = 10;
+    }
+    if(data==0x23){
+      if(rx_buff[0] ==0x21){
+        memcpy(&rx_pkt, rx_buff, 11);
+      }
+    }
+  }
+
+  // 2.2. send   : x, y, th, v, w
+  pkt_comm_counter++;
+  if(pkt_comm_counter>=11){
+    pkt_comm_counter = 1;
+    tx_pkt.drive_mode = drive_mode;
+    tx_pkt.x = x;
+    tx_pkt.y = y;
+    tx_pkt.th = th;
+    tx_pkt.v = v;
+    tx_pkt.w = w;
+    memcpy(tx_buff, &tx_pkt, 24);
+    Serial.write(tx_buff, 24);
+  }
+
+  drive_mode = rx_pkt.drive_mode;
 
   switch (drive_mode){
-    case (none):
+    case (Drive_mode::none):
+      v_0 = 0.0;
+      w_0 = 0.0;
       w_R_0 = 0.0;
       w_L_0 = 0.0;
       break;
-    case (unicycle_drive):
+    case (Drive_mode::unicycle_drive):
+      // receive: v_0, w_0
+      v_0 = rx_pkt.cmd_1;
+      w_0 = rx_pkt.cmd_2;
+      break;
+    case (Drive_mode::differential_drive):
+      // receive: w_R_0, w_L_0
+      w_R_0 = rx_pkt.cmd_1;
+      w_L_0 = rx_pkt.cmd_2;
+      break;
+    default:
+      v_0 = 0.0;
+      w_0 = 0.0;
+      w_R_0 = 0.0;
+      w_L_0 = 0.0;
+      break;
+  }
+
+  switch (drive_mode){
+    case (Drive_mode::none):
+      w_R_0 = 0.0;
+      w_L_0 = 0.0;
+      break;
+    case (Drive_mode::unicycle_drive):
       // receive: v_0, w_0
       ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
       ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
       break;
-    case (differential_drive):
+    case (Drive_mode::differential_drive):
       // receive: w_R_0, w_L_0
       break;
     default:
