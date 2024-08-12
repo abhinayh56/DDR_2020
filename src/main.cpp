@@ -55,6 +55,7 @@ struct Rx_packet{
 struct Tx_packet{
   uint8_t start = 0x21;
   uint8_t id = 0x00;
+  unsigned long t_millis = 0x00;
   uint8_t drive_mode = 0x00;
   double x = 0x00;
   double y = 0x00;
@@ -69,7 +70,7 @@ struct Rx_packet rx_pkt;
 struct Tx_packet tx_pkt;
 
 uint8_t rx_buff[11];
-uint8_t tx_buff[24];
+uint8_t tx_buff[28];
 
 uint8_t pkt_comm_counter = 0;
 uint8_t rx_buff_index = 0;
@@ -100,7 +101,7 @@ void loop() {
   wheel_odom.get_wheel_speed(&w_R, &w_L);
 
   // 2.1. receive: receive packet
-  // start_byte, drive_mode, data_1, data_2 end_byte
+  // start_byte, drive_mode, data_1, data_2, end_byte
   while(Serial.available()){
     uint8_t data = Serial.read();
     if(data==0x21){
@@ -123,22 +124,21 @@ void loop() {
   pkt_comm_counter++;
   if(pkt_comm_counter>=11){
     pkt_comm_counter = 1;
+    tx_pkt.t_millis = millis();
     tx_pkt.drive_mode = drive_mode;
     tx_pkt.x = x;
     tx_pkt.y = y;
     tx_pkt.th = th;
     tx_pkt.v = v;
     tx_pkt.w = w;
-    memcpy(tx_buff, &tx_pkt, 24);
-    Serial.write(tx_buff, 24);
+    memcpy(tx_buff, &tx_pkt, 28);
+    Serial.write(tx_buff, 28);
   }
 
   drive_mode = rx_pkt.drive_mode;
 
   switch (drive_mode){
     case (Drive_mode::none):
-      v_0 = 0.0;
-      w_0 = 0.0;
       w_R_0 = 0.0;
       w_L_0 = 0.0;
       break;
@@ -146,32 +146,13 @@ void loop() {
       // receive: v_0, w_0
       v_0 = rx_pkt.cmd_1;
       w_0 = rx_pkt.cmd_2;
-      break;
-    case (Drive_mode::differential_drive):
-      // receive: w_R_0, w_L_0
-      w_R_0 = rx_pkt.cmd_1;
-      w_L_0 = rx_pkt.cmd_2;
-      break;
-    default:
-      v_0 = 0.0;
-      w_0 = 0.0;
-      w_R_0 = 0.0;
-      w_L_0 = 0.0;
-      break;
-  }
-
-  switch (drive_mode){
-    case (Drive_mode::none):
-      w_R_0 = 0.0;
-      w_L_0 = 0.0;
-      break;
-    case (Drive_mode::unicycle_drive):
-      // receive: v_0, w_0
       ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
       ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
       break;
     case (Drive_mode::differential_drive):
       // receive: w_R_0, w_L_0
+      w_R_0 = rx_pkt.cmd_1;
+      w_L_0 = rx_pkt.cmd_2;
       break;
     default:
       w_R_0 = 0.0;
