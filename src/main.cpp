@@ -78,7 +78,7 @@ uint8_t rx_buff_index = 0;
 void setup() {
   tx_pkt.drive_mode = drive_mode;
   tx_pkt.id = 0x05;
-  Serial.begin(9600);
+  Serial.begin(115200);
   wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
   wheel_odom.set_dt(1.0/MAIN_LOOP_FREQ);
   ddr_uni.set_param(WHEEL_R, WHEEL_L);
