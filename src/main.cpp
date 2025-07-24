@@ -6,7 +6,7 @@
 #include "Timer_utils.h"
 #include "PID_controller.h"
 #include "Diff_drive_unicycle.h"
-#include "../config_files/Config.h"
+#include "../config/Config.h"
 
 Timer_utils timer(MAIN_LOOP_FREQ);
 Clock_utils clock;
