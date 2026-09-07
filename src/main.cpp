@@ -83,6 +83,7 @@ void loop()
 	{
 		com_uart.com_tx(drive_mode, x, y, th, v, w);
 	}
+	
 	com_uart_tx_counter++;
 	if (com_uart_tx_counter > com_uart_tx_counter_max)
 	{
