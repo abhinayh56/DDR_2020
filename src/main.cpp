@@ -50,7 +50,7 @@ unsigned long com_uart_tx_counter_max = (unsigned long)(MAIN_LOOP_FREQ / COM_UAR
 
 void setup()
 {
-	com_uart.init(Serial, 115200);
+	com_uart.init(Serial, 115200, TIMEOUT_RX_S);
 
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
 	wheel_odom.set_dt(1.0 / MAIN_LOOP_FREQ);

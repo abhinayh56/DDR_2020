@@ -34,7 +34,7 @@ class Com_uart
 {
 public:
 	Com_uart();
-	void init(HardwareSerial &serial, unsigned long baud);
+	void init(HardwareSerial &serial, unsigned long baud, double timeout_s);
 	void com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2);
 	void com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w);
 
@@ -49,7 +49,8 @@ private:
 	uint8_t pkt_comm_counter = 0;
 	uint8_t rx_buff_index = 0;
 
-	double last_t_us_rx = 0.0;
+	double last_t_rx_us = 0.0;
+	unsigned long timeout_rx_us = 0.0;
 };
 
 #endif

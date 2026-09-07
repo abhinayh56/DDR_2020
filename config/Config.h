@@ -3,6 +3,7 @@
 
 #define MAIN_LOOP_FREQ   400.0
 #define COM_UART_TX_FREQ 100.0
+#define TIMEOUT_RX_S     1.0
 
 #include "config_elec_connections.h"
 #include "config_robot_specs.h"

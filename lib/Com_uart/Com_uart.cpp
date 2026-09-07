@@ -4,13 +4,14 @@ Com_uart::Com_uart()
 {
 }
 
-void Com_uart::init(HardwareSerial &serial, unsigned long baud)
+void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s)
 {
     _serial = &serial;
     _serial->begin(baud);
     tx_pkt.drive_mode = 0x00;
     tx_pkt.id = 0x05;
-    last_t_us_rx = micros();
+    last_t_rx_us = micros();
+    timeout_rx_us = (unsigned long)(timeout_rx_s * 1000000.0);
 }
 
 void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
@@ -35,12 +36,12 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
             if (rx_buff[0] == 0x21)
             {
                 memcpy(&rx_pkt, rx_buff, 11);
-                last_t_us_rx = micros();
+                last_t_rx_us = micros();
             }
         }
     }
 
-    if (micros() - last_t_us_rx > 1)
+    if ((micros() - last_t_rx_us) > timeout_rx_us)
     {
         drive_mode = 0;
         cmd_1 = 0;
