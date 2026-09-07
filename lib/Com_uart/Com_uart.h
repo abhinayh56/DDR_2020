@@ -42,7 +42,7 @@ class Com_uart
 public:
 	Com_uart();
 	void init(HardwareSerial &serial, unsigned long baud);
-	void com_rx();
+	void com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2);
 	void com_tx(uint8_t drive_mode, double x, double y, double th, double v, double w);
 
 private:

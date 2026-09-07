@@ -74,8 +74,7 @@ void loop()
 	wheel_odom.get_wheel_speed(&w_R, &w_L);
 
 	// 2.1. receive: receive packet
-	com_uart.com_rx();
-	drive_mode = rx_pkt.drive_mode;
+	com_uart.com_rx(drive_mode, cmd_1, cmd_2);
 
 	// 2.2. send   : x, y, th, v, w
 	com_uart.com_tx(drive_mode, x, y, th, v, w);
@@ -88,15 +87,15 @@ void loop()
 		break;
 	case (Drive_mode::unicycle_drive):
 		// receive: v_0, w_0
-		v_0 = rx_pkt.cmd_1;
-		w_0 = rx_pkt.cmd_2;
+		v_0 = cmd_1;
+		w_0 = cmd_2;
 		ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
 		ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
 		break;
 	case (Drive_mode::differential_drive):
 		// receive: w_R_0, w_L_0
-		w_R_0 = rx_pkt.cmd_1;
-		w_L_0 = rx_pkt.cmd_2;
+		w_R_0 = cmd_1;
+		w_L_0 = cmd_2;
 		break;
 	default:
 		w_R_0 = 0.0;

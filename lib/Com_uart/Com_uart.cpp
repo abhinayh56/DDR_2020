@@ -12,7 +12,7 @@ void Com_uart::init(HardwareSerial &serial, unsigned long baud)
     tx_pkt.id = 0x05;
 }
 
-void Com_uart::com_rx()
+void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 {
     // start_byte, drive_mode, data_1, data_2, end_byte
     while (Serial.available())
@@ -37,6 +37,10 @@ void Com_uart::com_rx()
             }
         }
     }
+
+    drive_mode = rx_pkt.drive_mode;
+    cmd_1 = rx_pkt.cmd_1;
+    cmd_2 = rx_pkt.cmd_2;
 }
 
 void Com_uart::com_tx(uint8_t drive_mode, double x, double y, double th, double v, double w)
