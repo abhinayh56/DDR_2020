@@ -3,6 +3,7 @@
 */
 
 #include <Arduino.h>
+#include "Com_uart.h"
 #include "Wheel_odom.h"
 #include "Clock_utils.h"
 #include "Timer_utils.h"
@@ -10,6 +11,7 @@
 #include "Diff_drive_unicycle.h"
 #include "../config/Config.h"
 
+Com_uart com_uart;
 Timer_utils timer(MAIN_LOOP_FREQ);
 Clock_utils clock;
 Wheel_odom wheel_odom;
@@ -35,66 +37,30 @@ double w_R_0, w_L_0;
 double V_R, V_L;
 double PWM_R, PWM_L;
 
-enum Drive_mode
-{
-	none = 0x00,
-	unicycle_drive = 0x01,
-	differential_drive = 0x02
-};
-
 uint8_t drive_mode = none;
-
-#pragma pack(push, 1)
-struct Rx_packet
-{
-	uint8_t start = 0x21;
-	uint8_t drive_mode = 0x00;
-	double cmd_1 = 0x00;
-	double cmd_2 = 0x00;
-	uint8_t end = 0x23;
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-struct Tx_packet
-{
-	uint8_t start = 0x21;
-	uint8_t id = 0x00;
-	unsigned long t_millis = 0x00;
-	uint8_t drive_mode = 0x00;
-	double x = 0x00;
-	double y = 0x00;
-	double th = 0x00;
-	double v = 0x00;
-	double w = 0x00;
-	uint8_t end = 0x23;
-};
-#pragma pack(pop)
-
-struct Rx_packet rx_pkt;
-struct Tx_packet tx_pkt;
-
-uint8_t rx_buff[11];
-uint8_t tx_buff[28];
-
-uint8_t pkt_comm_counter = 0;
-uint8_t rx_buff_index = 0;
+double cmd_1 = 0.0;
+double cmd_2 = 0.0;
 
 void setup()
 {
-	tx_pkt.drive_mode = drive_mode;
-	tx_pkt.id = 0x05;
-	Serial.begin(115200);
+	com_uart.init(Serial, 115200);
+
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
 	wheel_odom.set_dt(1.0 / MAIN_LOOP_FREQ);
+
 	ddr_uni.set_param(WHEEL_R, WHEEL_L);
 	ddr_uni.set_v_max(V_C_MAX);
 	ddr_uni.set_w_max(W_C_MAX);
+
 	clock.init();
+
 	timer.init(MAIN_LOOP_FREQ);
+
 	init_encoders();
+
 	init_motors();
 	command_motors(0, 0);
+
 	controller_R.set_param(Kp_R, Ki_R, Kd_R, Kff_R, dt_R, I_max_R, u_max_R, fc_R);
 	controller_L.set_param(Kp_L, Ki_L, Kd_L, Kff_L, dt_L, I_max_L, u_max_L, fc_L);
 }
@@ -108,47 +74,11 @@ void loop()
 	wheel_odom.get_wheel_speed(&w_R, &w_L);
 
 	// 2.1. receive: receive packet
-	// start_byte, drive_mode, data_1, data_2, end_byte
-	while (Serial.available())
-	{
-		uint8_t data = Serial.read();
-		if (data == 0x21)
-		{
-			rx_buff_index = 0;
-		}
-		rx_buff[rx_buff_index] = data;
-		rx_buff_index++;
-
-		if (rx_buff_index > 10)
-		{
-			rx_buff_index = 10;
-		}
-		if (data == 0x23)
-		{
-			if (rx_buff[0] == 0x21)
-			{
-				memcpy(&rx_pkt, rx_buff, 11);
-			}
-		}
-	}
+	com_uart.com_rx();
+	drive_mode = rx_pkt.drive_mode;
 
 	// 2.2. send   : x, y, th, v, w
-	pkt_comm_counter++;
-	if (pkt_comm_counter >= 11)
-	{
-		pkt_comm_counter = 1;
-		tx_pkt.t_millis = millis();
-		tx_pkt.drive_mode = drive_mode;
-		tx_pkt.x = x;
-		tx_pkt.y = y;
-		tx_pkt.th = th;
-		tx_pkt.v = v;
-		tx_pkt.w = w;
-		memcpy(tx_buff, &tx_pkt, 28);
-		Serial.write(tx_buff, 28);
-	}
-
-	drive_mode = rx_pkt.drive_mode;
+	com_uart.com_tx(drive_mode, x, y, th, v, w);
 
 	switch (drive_mode)
 	{
