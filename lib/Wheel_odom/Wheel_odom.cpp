@@ -57,8 +57,11 @@ void Wheel_odom::get_pose(double *xc, double *yc, double *thc)
 
 void Wheel_odom::update(long nr, long nl)
 {
+	noInterrupts();
 	N_L = nl;
 	N_R = nr;
+	interrupts();
+	
 	w_L = const_math_2pi * (double)(N_L - N_L_pre) / ((double)N * dt);
 	w_R = const_math_2pi * (double)(N_R - N_R_pre) / ((double)N * dt);
 	v = (r / 2.0) * (w_L + w_R);

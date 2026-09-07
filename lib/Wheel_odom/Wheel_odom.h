@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "Math_functions.h"
+#include <Arduino.h>
 
 class Wheel_odom
 {

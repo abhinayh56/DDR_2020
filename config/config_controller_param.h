@@ -9,7 +9,7 @@
 #define I_max_R    V_BAT_MAX*SAFETY_FACTOR
 #define u_max_R    V_BAT_MAX*SAFETY_FACTOR
 #define D_FILTER_R false
-#define fc_R       MAIN_LOOP_FREQ*0.5
+#define fc_R       50.0
 
 #define Kp_L       0.0
 #define Ki_L       0.0
@@ -19,6 +19,6 @@
 #define I_max_L    V_BAT_MAX*SAFETY_FACTOR
 #define u_max_L    V_BAT_MAX*SAFETY_FACTOR
 #define D_FILTER_L false
-#define fc_L       MAIN_LOOP_FREQ*0.5
+#define fc_L       50.0
 
 #endif
