@@ -10,6 +10,7 @@ void Com_uart::init(HardwareSerial &serial, unsigned long baud)
     _serial->begin(baud);
     tx_pkt.drive_mode = 0x00;
     tx_pkt.id = 0x05;
+    last_t_us_rx = micros();
 }
 
 void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
@@ -34,13 +35,23 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
             if (rx_buff[0] == 0x21)
             {
                 memcpy(&rx_pkt, rx_buff, 11);
+                last_t_us_rx = micros();
             }
         }
     }
 
-    drive_mode = rx_pkt.drive_mode;
-    cmd_1 = rx_pkt.cmd_1;
-    cmd_2 = rx_pkt.cmd_2;
+    if (micros() - last_t_us_rx > 1)
+    {
+        drive_mode = 0;
+        cmd_1 = 0;
+        cmd_2 = 0;
+    }
+    else
+    {
+        drive_mode = rx_pkt.drive_mode;
+        cmd_1 = rx_pkt.cmd_1;
+        cmd_2 = rx_pkt.cmd_2;
+    }
 }
 
 void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w)

@@ -5,15 +5,20 @@
 #include <Arduino.h>
 #include "Com_uart.h"
 #include "Wheel_odom.h"
-#include "Clock_utils.h"
 #include "Timer_utils.h"
 #include "PID_controller.h"
 #include "Diff_drive_unicycle.h"
 #include "../config/Config.h"
 
+enum Drive_mode
+{
+	NONE = 0x00,
+	UNICYCLE = 0x01,
+	DIFFERENTIAL = 0x02
+};
+
 Com_uart com_uart;
 Timer_utils timer(MAIN_LOOP_FREQ);
-Clock_utils clock;
 Wheel_odom wheel_odom;
 Diff_drive_unicycle ddr_uni;
 PID_controller controller_R, controller_L;
@@ -36,7 +41,7 @@ double w_R_0, w_L_0;
 double v_R_0, v_L_0;
 double PWM_R, PWM_L;
 
-uint8_t drive_mode = none;
+uint8_t drive_mode = Drive_mode::NONE;
 double cmd_1 = 0.0;
 double cmd_2 = 0.0;
 
@@ -53,8 +58,6 @@ void setup()
 	ddr_uni.set_param(WHEEL_R, WHEEL_L);
 	ddr_uni.set_v_max(V_C_MAX);
 	ddr_uni.set_w_max(W_C_MAX);
-
-	clock.init();
 
 	timer.init(MAIN_LOOP_FREQ);
 
@@ -83,7 +86,7 @@ void loop()
 	{
 		com_uart.com_tx(drive_mode, x, y, th, v, w);
 	}
-	
+
 	com_uart_tx_counter++;
 	if (com_uart_tx_counter > com_uart_tx_counter_max)
 	{
@@ -92,18 +95,18 @@ void loop()
 
 	switch (drive_mode)
 	{
-	case (Drive_mode::none):
+	case (Drive_mode::NONE):
 		w_R_0 = 0.0;
 		w_L_0 = 0.0;
 		break;
-	case (Drive_mode::unicycle_drive):
+	case (Drive_mode::UNICYCLE):
 		// receive: v_0, w_0
 		v_0 = cmd_1;
 		w_0 = cmd_2;
 		ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
 		ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
 		break;
-	case (Drive_mode::differential_drive):
+	case (Drive_mode::DIFFERENTIAL):
 		// receive: w_R_0, w_L_0
 		w_R_0 = cmd_1;
 		w_L_0 = cmd_2;

@@ -30,13 +30,6 @@ struct Tx_packet
 };
 #pragma pack(pop)
 
-enum Drive_mode
-{
-	none = 0x00,
-	unicycle_drive = 0x01,
-	differential_drive = 0x02
-};
-
 class Com_uart
 {
 public:
@@ -55,6 +48,8 @@ private:
 
 	uint8_t pkt_comm_counter = 0;
 	uint8_t rx_buff_index = 0;
+
+	double last_t_us_rx = 0.0;
 };
 
 #endif
