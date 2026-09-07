@@ -208,7 +208,7 @@ void loop()
 
 void init_encoder_interrupt()
 {
-	// interrupt [2,3,4,5]->[19,18,2,3]
+	// interrupt [19,18,2,3]
 	EICRA = (1 << ISC20) | (1 << ISC30);
 	EICRB = (1 << ISC40) | (1 << ISC50);
 	EIMSK = (1 << INT2) | (1 << INT3) | (1 << INT4) | (1 << INT5);
