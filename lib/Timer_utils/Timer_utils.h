@@ -18,7 +18,7 @@ public:
 	void set_t_last_micros();
 
 private:
-	double freq = 400.0;
+	double freq = 100.0;
 	double dt = 1.0 / freq;
 	unsigned long loop_time_us = (unsigned long)(1000000.0f * dt);
 	unsigned long t_last_us = 0;
