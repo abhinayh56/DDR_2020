@@ -28,13 +28,12 @@ void init_encoders();
 volatile long count1 = 0;
 volatile long count2 = 0;
 
-double x, y, th, v, w;
-double v_0, w_0;
-
 double w_R, w_L;
-double w_R_0, w_L_0;
-
 double V_R, V_L;
+double x, y, th, v, w;
+
+double v_0, w_0;
+double w_R_0, w_L_0;
 double PWM_R, PWM_L;
 
 uint8_t drive_mode = none;

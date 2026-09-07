@@ -15,9 +15,9 @@ void Com_uart::init(HardwareSerial &serial, unsigned long baud)
 void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 {
     // start_byte, drive_mode, data_1, data_2, end_byte
-    while (Serial.available())
+    while (_serial->available())
     {
-        uint8_t data = Serial.read();
+        uint8_t data = _serial->read();
         if (data == 0x21)
         {
             rx_buff_index = 0;
@@ -57,6 +57,6 @@ void Com_uart::com_tx(uint8_t drive_mode, double x, double y, double th, double 
         tx_pkt.v = v;
         tx_pkt.w = w;
         memcpy(tx_buff, &tx_pkt, 28);
-        Serial.write(tx_buff, 28);
+        _serial->write(tx_buff, 28);
     }
 }
