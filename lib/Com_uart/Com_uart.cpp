@@ -43,7 +43,7 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
     cmd_2 = rx_pkt.cmd_2;
 }
 
-void Com_uart::com_tx(uint8_t drive_mode, double x, double y, double th, double v, double w)
+void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w)
 {
     pkt_comm_counter++;
     if (pkt_comm_counter >= 11)
