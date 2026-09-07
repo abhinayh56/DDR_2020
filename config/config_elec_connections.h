@@ -9,10 +9,10 @@
 #define MOTOR_2_PIN_B   5
 #define MOTOR_2_PIN_PWM 6
 
-#define ENC_1_PIN_A 18
-#define ENC_1_PIN_B 19
+#define ENC_1_PIN_A     18
+#define ENC_1_PIN_B     19
 
-#define ENC_2_PIN_A 2
-#define ENC_2_PIN_B 3
+#define ENC_2_PIN_A     2
+#define ENC_2_PIN_B     3
 
 #endif
