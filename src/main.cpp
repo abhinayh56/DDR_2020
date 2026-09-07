@@ -82,7 +82,6 @@ void loop()
 	if (com_uart_tx_counter == com_uart_tx_counter_max)
 	{
 		com_uart.com_tx(drive_mode, x, y, th, v, w);
-		com_uart_tx_counter = 0;
 	}
 
 	com_uart_tx_counter++;
