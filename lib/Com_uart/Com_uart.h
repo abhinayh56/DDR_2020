@@ -26,6 +26,8 @@ struct Tx_packet
 	double th = 0x00;
 	double v = 0x00;
 	double w = 0x00;
+	double w_R = 0x00;
+	double w_L = 0x00;
 	uint8_t end = 0x23;
 };
 #pragma pack(pop)
@@ -36,7 +38,7 @@ public:
 	Com_uart();
 	void init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq);
 	void com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2);
-	void com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w);
+	void com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_R, const double w_L);
 
 private:
 	HardwareSerial *_serial;
@@ -44,7 +46,7 @@ private:
 	struct Tx_packet tx_pkt;
 
 	uint8_t rx_buff[11];
-	uint8_t tx_buff[28];
+	uint8_t tx_buff[36];
 
 	unsigned long com_uart_tx_counter = 1;
 	double main_loop_freq = 100.0;

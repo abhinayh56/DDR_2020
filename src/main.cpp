@@ -79,7 +79,7 @@ void loop()
 	com_uart.com_rx(drive_mode, cmd_1, cmd_2);
 
 	// 2.2. send   : x, y, th, v, w
-	com_uart.com_tx(drive_mode, x, y, th, v, w);
+	com_uart.com_tx(drive_mode, x, y, th, v, w, w_R, w_L);
 
 	switch (drive_mode)
 	{

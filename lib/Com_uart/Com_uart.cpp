@@ -56,7 +56,7 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 	}
 }
 
-void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w)
+void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_R, const double w_L)
 {
 	if (com_uart_tx_counter == com_uart_tx_counter_max)
 	{
@@ -67,8 +67,10 @@ void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, 
 		tx_pkt.th = th;
 		tx_pkt.v = v;
 		tx_pkt.w = w;
-		memcpy(tx_buff, &tx_pkt, 28);
-		_serial->write(tx_buff, 28);
+		tx_pkt.w_R = w_R;
+		tx_pkt.w_L = w_L;
+		memcpy(tx_buff, &tx_pkt, 36);
+		_serial->write(tx_buff, 36);
 	}
 
 	com_uart_tx_counter++;
