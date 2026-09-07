@@ -149,22 +149,6 @@ float Math_functions::poly_map_degn(float x, float a[], int n){
   }
 }
 
-// https://en.wikipedia.org/wiki/Fast_inverse_square_root
-float Math_functions::fast_inv_sqrt(float number){
-  long i;
-  float x2, y;
-  const float threehalfs = 1.5F;
-
-  x2 = number*0.5F;
-  y  = number;
-  i  = *(long*)&y;
-  i  = 0x5f3759df - (i>>1);
-  y  = *(float*)&i;
-  y  = y*(threehalfs - (x2*y*y));
-	// y  = y*(threehalfs - (x2*y*y));   // 2nd iteration, this can be removed
-	return y;
-}
-
 bool Math_functions::points_AB_line_same_side(float x, float y, float x0, float y0, float x1, float y1, float x2, float y2){
   float L0 = (y2-y1)*(x0-x1) - (x2-x1)*(y0-y1);
   float L  = (y2-y1)*(x -x1) - (x2-x1)*(y -y1);
