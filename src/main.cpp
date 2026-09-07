@@ -29,11 +29,11 @@ volatile long count1 = 0;
 volatile long count2 = 0;
 
 double w_R, w_L;
-double V_R, V_L;
 double x, y, th, v, w;
 
 double v_0, w_0;
 double w_R_0, w_L_0;
+double v_R_0, v_L_0;
 double PWM_R, PWM_L;
 
 uint8_t drive_mode = none;
@@ -102,34 +102,15 @@ void loop()
 		break;
 	}
 
-	// 3. w_R_0, w_L_0 --> V_R, V_L
-	V_R = controller_R.cal_u(w_R_0, w_R, D_FILTER_R);
-	V_L = controller_L.cal_u(w_L_0, w_L, D_FILTER_L);
+	// 3. w_R_0, w_L_0 --> v_R_0, v_L_0
+	v_R_0 = controller_R.cal_u(w_R_0, w_R, D_FILTER_R);
+	v_L_0 = controller_L.cal_u(w_L_0, w_L, D_FILTER_L);
 
-	// 4. V_R, V_L --> PWM_R, PWM_L
-	PWM_R = (PWM_MAX / V_BAT_MAX) * V_R;
-	PWM_L = (PWM_MAX / V_BAT_MAX) * V_L;
+	// 4. v_R_0, v_L_0 --> PWM_R, PWM_L
+	PWM_R = (PWM_MAX / V_BAT_MAX) * v_R_0;
+	PWM_L = (PWM_MAX / V_BAT_MAX) * v_L_0;
 
 	command_motors(PWM_R, PWM_L);
-
-	// Serial.print(clock.get_t_now_s(),2);
-	// Serial.print(", ");
-	// Serial.print(count1);
-	// Serial.print(", ");
-	// Serial.print(count2);
-	// Serial.print(", ");
-	// Serial.print(x_c*100.0);
-	// Serial.print(", ");
-	// Serial.print(y_c*100.0);
-	// Serial.print(", ");
-	// Serial.print(th_c*180.0/(22.0/7.0));
-	// Serial.print(w_R);
-	// Serial.print(", ");
-	// Serial.print(w_R);
-	// Serial.print(", ");
-	// Serial.print(v);
-	// Serial.print(", ");
-	// Serial.println(w);
 
 	timer.sleep();
 }
