@@ -45,12 +45,9 @@ uint8_t drive_mode = Drive_mode::NONE;
 double cmd_1 = 0.0;
 double cmd_2 = 0.0;
 
-unsigned long com_uart_tx_counter = 1;
-unsigned long com_uart_tx_counter_max = (unsigned long)(MAIN_LOOP_FREQ / COM_UART_TX_FREQ);
-
 void setup()
 {
-	com_uart.init(Serial, 115200, TIMEOUT_RX_S);
+	com_uart.init(Serial, 115200, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ);
 
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
 	wheel_odom.set_dt(1.0 / MAIN_LOOP_FREQ);
@@ -82,16 +79,7 @@ void loop()
 	com_uart.com_rx(drive_mode, cmd_1, cmd_2);
 
 	// 2.2. send   : x, y, th, v, w
-	if (com_uart_tx_counter == com_uart_tx_counter_max)
-	{
-		com_uart.com_tx(drive_mode, x, y, th, v, w);
-	}
-
-	com_uart_tx_counter++;
-	if (com_uart_tx_counter > com_uart_tx_counter_max)
-	{
-		com_uart_tx_counter = 1;
-	}
+	com_uart.com_tx(drive_mode, x, y, th, v, w);
 
 	switch (drive_mode)
 	{

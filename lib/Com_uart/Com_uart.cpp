@@ -4,12 +4,13 @@ Com_uart::Com_uart()
 {
 }
 
-void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s)
+void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq)
 {
     _serial = &serial;
     _serial->begin(baud);
     tx_pkt.drive_mode = 0x00;
     tx_pkt.id = 0x05;
+    com_uart_tx_counter_max = (unsigned long)(main_loop_freq / com_uart_tx_freq);
     last_t_rx_us = micros();
     timeout_rx_us = (unsigned long)(timeout_rx_s * 1000000.0);
 }
@@ -57,10 +58,8 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 
 void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w)
 {
-    pkt_comm_counter++;
-    if (pkt_comm_counter >= 11)
+    if (com_uart_tx_counter == com_uart_tx_counter_max)
     {
-        pkt_comm_counter = 1;
         tx_pkt.t_millis = millis();
         tx_pkt.drive_mode = drive_mode;
         tx_pkt.x = x;
@@ -70,5 +69,11 @@ void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, 
         tx_pkt.w = w;
         memcpy(tx_buff, &tx_pkt, 28);
         _serial->write(tx_buff, 28);
+    }
+
+    com_uart_tx_counter++;
+    if (com_uart_tx_counter > com_uart_tx_counter_max)
+    {
+        com_uart_tx_counter = 1;
     }
 }
