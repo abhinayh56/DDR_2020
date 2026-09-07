@@ -27,8 +27,10 @@ def decode_rx_pkt(rx_pkt_):
     th         = tc.byte_4_2_FLOAT(rx_pkt_[15:19])
     v          = tc.byte_4_2_FLOAT(rx_pkt_[19:23])
     w          = tc.byte_4_2_FLOAT(rx_pkt_[23:27])
+    w_R        = tc.byte_4_2_FLOAT(rx_pkt_[27:31])
+    w_L        = tc.byte_4_2_FLOAT(rx_pkt_[31:35])
     end        = rx_pkt_[27]
-    return start, id, t_millis/1000.0, drive_mode, x, y, th, v, w, end	
+    return start, id, t_millis/1000.0, drive_mode, x, y, th, v, w, w_R, w_L, end
 
 ser.open()
 
