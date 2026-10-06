@@ -3,6 +3,13 @@
 
 #include <Arduino.h>
 
+enum Drive_mode
+{
+	NONE = 0x00,
+	UNICYCLE = 0x01,
+	DIFFERENTIAL = 0x02
+};
+
 #pragma pack(push, 1)
 struct Rx_packet
 {

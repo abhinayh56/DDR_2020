@@ -45,13 +45,6 @@ double PWM_R = 0; // pwm setpoint right motor
 double PWM_L = 0; // pwm setpoint left motor
 
 // communication variables
-enum Drive_mode
-{
-	NONE = 0x00,
-	UNICYCLE = 0x01,
-	DIFFERENTIAL = 0x02
-};
-
 uint8_t drive_mode = Drive_mode::NONE; // drive mode received
 double cmd_1 = 0.0;					   // command 1 received
 double cmd_2 = 0.0;					   // command 2 received
