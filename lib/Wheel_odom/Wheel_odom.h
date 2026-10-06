@@ -25,8 +25,8 @@ private:
 	double L = 0.265;
 
 	double dt = 0.004;
-	long N_L, N_R;
-	long N_L_pre, N_R_pre;
+	long long N_L, N_R;
+	long long N_L_pre, N_R_pre;
 	double w_L, w_R;
 	double v;
 	double w;
