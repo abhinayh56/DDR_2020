@@ -42,7 +42,7 @@ public:
 	float get_D();
 	float get_u();
 
-	float cal_u(float x0, float x, bool d_filter_ = false);
+	float update(float x0, float x, bool d_filter_ = false);
 	void reset();
 
 private:

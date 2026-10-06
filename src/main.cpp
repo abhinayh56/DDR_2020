@@ -95,12 +95,8 @@ void loop()
 	wheel_odom.get_twist(v, w);
 	wheel_odom.get_wheel_speed(w_R, w_L);
 
-	// 2. ============================ Communication =============================
-	// 2.1. Receive: receive packet
+	// 2. ========================== Communication (RX) ==========================
 	com_uart.com_rx(drive_mode, cmd_1, cmd_2);
-
-	// 2.2. Send   : x, y, th, v, w
-	com_uart.com_tx(drive_mode, x, y, th, v, w, w_R, w_L);
 
 	switch (drive_mode)
 	{
@@ -127,11 +123,14 @@ void loop()
 	}
 
 	// 3. ======================== Wheel speed controller ========================
-	v_R_0 = controller_R.cal_u(w_R_0, w_R, D_FILTER_R);
-	v_L_0 = controller_L.cal_u(w_L_0, w_L, D_FILTER_L);
+	v_R_0 = controller_R.update(w_R_0, w_R, D_FILTER_R);
+	v_L_0 = controller_L.update(w_L_0, w_L, D_FILTER_L);
 
 	// 4. ============================ Command motors ============================
 	motor_interface.command_voltage(v_R_0, v_L_0);
+
+	// 5. ========================== Communication (TX) ==========================
+	com_uart.com_tx(drive_mode, x, y, th, v, w, w_R, w_L);
 
 	timer.sleep();
 }

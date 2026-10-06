@@ -185,7 +185,7 @@ float PID_controller::get_u()
 	return u;
 }
 
-float PID_controller::cal_u(float x0, float x, bool d_filter_)
+float PID_controller::update(float x0, float x, bool d_filter_)
 {
 	float e = x0 - x;
 	P = Kp * e;
