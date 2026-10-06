@@ -17,7 +17,7 @@ public:
 	void get_wheel_speed(double *wr, double *wl);
 	void get_twist(double *vc, double *wc);
 	void get_pose(double *xc, double *yc, double *thc);
-	void update(long nr, long nl);
+	void update(long long nr, long long nl);
 
 private:
 	unsigned long N = 133600;
