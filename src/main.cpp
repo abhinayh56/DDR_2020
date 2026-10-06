@@ -112,8 +112,8 @@ void loop()
 		// receive: v_0, w_0
 		v_0 = cmd_1;
 		w_0 = cmd_2;
-		ddr_uni.update_domain_vw(v_0, w_0, &v_0, &w_0);
-		ddr_uni.uni2ddr(v_0, w_0, &w_R_0, &w_L_0);
+		ddr_uni.update_domain_vw(v_0, w_0, v_0, w_0);
+		ddr_uni.uni2ddr(v_0, w_0, w_R_0, w_L_0);
 		break;
 	case (Drive_mode::DIFFERENTIAL):
 		// receive: w_R_0, w_L_0

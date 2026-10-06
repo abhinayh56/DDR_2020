@@ -16,13 +16,13 @@ public:
 	void set_L(double L_);
 	double get_r();
 	double get_L();
-	void uni2ddr(double Vc, double Wc, double *wr, double *wl);
+	void uni2ddr(double Vc, double Wc, double &wr, double &wl);
 	double get_wr(double Vc, double Wc);
 	double get_wl(double Vc, double Wc);
-	void ddr2uni(double wr, double wl, double *Vc, double *Wc);
+	void ddr2uni(double wr, double wl, double &Vc, double &Wc);
 	double get_Vc(double wr, double wl);
 	double get_Wc(double wr, double wl);
-	void update_domain_vw(double Vc_in, double Wc_in, double *Vc_out, double *Wc_out);
+	void update_domain_vw(double Vc_in, double Wc_in, double &Vc_out, double &Wc_out);
 
 private:
 	Math_functions math_fun;

@@ -59,14 +59,10 @@ double Diff_drive_unicycle::get_L()
 	return L;
 }
 
-void Diff_drive_unicycle::uni2ddr(double Vc_, double Wc_, double *wr, double *wl)
+void Diff_drive_unicycle::uni2ddr(double Vc, double Wc, double &wr, double &wl)
 {
-	double Vc = Vc_;
-	double Wc = Wc_;
-	update_domain_vw(Vc_, Wc_, &Vc, &Wc);
-
-	*wr = (Vc + Wc * L * 0.5) / r;
-	*wl = (Vc - Wc * L * 0.5) / r;
+	wr = (Vc + Wc * L * 0.5) / r;
+	wl = (Vc - Wc * L * 0.5) / r;
 }
 
 double Diff_drive_unicycle::get_wr(double Vc, double Wc)
@@ -79,10 +75,10 @@ double Diff_drive_unicycle::get_wl(double Vc, double Wc)
 	return (Vc - Wc * L * 0.5) / r;
 }
 
-void Diff_drive_unicycle::ddr2uni(double wr, double wl, double *Vc, double *Wc)
+void Diff_drive_unicycle::ddr2uni(double wr, double wl, double &Vc, double &Wc)
 {
-	*Vc = (wr + wl) * r * 0.5;
-	*Wc = (wr - wl) * r / L;
+	Vc = (wr + wl) * r * 0.5;
+	Wc = (wr - wl) * r / L;
 }
 
 double Diff_drive_unicycle::get_Vc(double wr, double wl)
@@ -95,7 +91,7 @@ double Diff_drive_unicycle::get_Wc(double wr, double wl)
 	return (wr - wl) * r / L;
 }
 
-void Diff_drive_unicycle::update_domain_vw(double V_in, double W_in, double *V_out, double *W_out)
+void Diff_drive_unicycle::update_domain_vw(double V_in, double W_in, double &V_out, double &W_out)
 {
 	double V_n = V_in;
 	double W_n = W_in;
@@ -181,6 +177,6 @@ void Diff_drive_unicycle::update_domain_vw(double V_in, double W_in, double *V_o
 		break;
 	}
 
-	*V_out = V_n;
-	*W_out = W_n;
+	V_out = V_n;
+	W_out = W_n;
 }
