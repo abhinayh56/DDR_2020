@@ -30,8 +30,10 @@ void command_motor_2(float pwm_2);
 void init_encoder_interrupt();
 void init_encoders();
 
-volatile long count1 = 0;
-volatile long count2 = 0;
+volatile long long count1 = 0;
+volatile long long count2 = 0;
+long long count1_cpy = 0;
+long long count2_cpy = 0;
 
 double w_R, w_L;
 double x, y, th, v, w;
@@ -70,7 +72,12 @@ void setup()
 void loop()
 {
 	// 1. Odometry
-	wheel_odom.update(count1, count2);
+	noInterrupts();
+	count1_cpy = count1;
+	count2_cpy = count2;
+	interrupts();
+
+	wheel_odom.update(count1_cpy, count2_cpy);
 	wheel_odom.get_pose(&x, &y, &th);
 	wheel_odom.get_twist(&v, &w);
 	wheel_odom.get_wheel_speed(&w_R, &w_L);
@@ -134,117 +141,49 @@ void init_encoders()
 
 ISR(INT2_vect)
 {
-	int a1 = digitalRead(ENC_1_PIN_A);
-	int b1 = digitalRead(ENC_1_PIN_B);
-
-	if (a1 == 1)
+	if (digitalRead(ENC_1_PIN_A) == digitalRead(ENC_1_PIN_B))
 	{
-		if (b1 == 1)
-		{
-			count1--;
-		}
-		else
-		{
-			count1++;
-		}
+		count1--;
 	}
 	else
 	{
-		if (b1 == 0)
-		{
-			count1--;
-		}
-		else
-		{
-			count1++;
-		}
+		count1++;
 	}
 }
 
 ISR(INT3_vect)
 {
-	int a1 = digitalRead(ENC_1_PIN_A);
-	int b1 = digitalRead(ENC_1_PIN_B);
-
-	if (b1 == 1)
+	if (digitalRead(ENC_1_PIN_A) == digitalRead(ENC_1_PIN_B))
 	{
-		if (a1 == 0)
-		{
-			count1--;
-		}
-		else
-		{
-			count1++;
-		}
+		count1++;
 	}
 	else
 	{
-		if (a1 == 1)
-		{
-			count1--;
-		}
-		else
-		{
-			count1++;
-		}
+		count1--;
 	}
 }
 
 ISR(INT4_vect)
 {
-	int a2 = digitalRead(ENC_2_PIN_A);
-	int b2 = digitalRead(ENC_2_PIN_B);
-
-	if (a2 == 1)
+	if (digitalRead(ENC_2_PIN_A) == digitalRead(ENC_2_PIN_B))
 	{
-		if (b2 == 1)
-		{
-			count2++;
-		}
-		else
-		{
-			count2--;
-		}
+		count2++;
 	}
 	else
 	{
-		if (b2 == 0)
-		{
-			count2++;
-		}
-		else
-		{
-			count2--;
-		}
+		count2--;
 	}
 }
 
 ISR(INT5_vect)
 {
-	int a2 = digitalRead(ENC_2_PIN_A);
-	int b2 = digitalRead(ENC_2_PIN_B);
-
-	if (b2 == 1)
+	if (digitalRead(ENC_2_PIN_A) == digitalRead(ENC_2_PIN_B))
 	{
-		if (a2 == 0)
-		{
-			count2++;
-		}
-		else
-		{
-			count2--;
-		}
+		count2--;
 	}
 	else
 	{
-		if (a2 == 1)
-		{
-			count2++;
-		}
-		else
-		{
-			count2--;
-		}
+		count2++;
 	}
 }
 
