@@ -89,8 +89,10 @@ void loop()
 	wheel_odom.get_wheel_speed(w_R, w_L);
 
 	// 2. ========================== Communication (RX) ==========================
+	// 2.1. Get drive mode and command from UART
 	com_uart.com_rx(drive_mode, cmd_1, cmd_2);
 
+	// 2.2. Update setpoints based on drive mode and command
 	switch (drive_mode)
 	{
 	case (Drive_mode::NONE):
@@ -98,14 +100,12 @@ void loop()
 		w_L_0 = 0.0;
 		break;
 	case (Drive_mode::UNICYCLE):
-		// receive: v_0, w_0
 		v_0 = cmd_1;
 		w_0 = cmd_2;
 		ddr_uni.update_domain_vw(v_0, w_0, v_0, w_0);
 		ddr_uni.uni2ddr(v_0, w_0, w_R_0, w_L_0);
 		break;
 	case (Drive_mode::DIFFERENTIAL):
-		// receive: w_R_0, w_L_0
 		w_R_0 = cmd_1;
 		w_L_0 = cmd_2;
 		break;
@@ -115,7 +115,7 @@ void loop()
 		break;
 	}
 
-	// 3. ======================== Wheel speed controller ========================
+	// 3. ====================== Run motor speed controller ======================
 	v_R_0 = controller_R.update(w_R_0, w_R, D_FILTER_R);
 	v_L_0 = controller_L.update(w_L_0, w_L, D_FILTER_L);
 
