@@ -36,30 +36,30 @@ double Wheel_odom::get_dt()
 	return dt;
 }
 
-void Wheel_odom::get_wheel_speed(double *wr, double *wl)
+void Wheel_odom::get_wheel_speed(double &wr, double &wl)
 {
-	*wr = w_R;
-	*wl = w_L;
+	wr = w_R;
+	wl = w_L;
 }
 
-void Wheel_odom::get_twist(double *vc, double *wc)
+void Wheel_odom::get_twist(double &vc, double &wc)
 {
-	*vc = v;
-	*wc = w;
+	vc = v;
+	wc = w;
 }
 
-void Wheel_odom::get_pose(double *xc, double *yc, double *thc)
+void Wheel_odom::get_pose(double &xc, double &yc, double &thc)
 {
-	*xc = x;
-	*yc = y;
-	*thc = th;
+	xc = x;
+	yc = y;
+	thc = th;
 }
 
 void Wheel_odom::update(long long nr, long long nl)
 {
 	N_L = nl;
 	N_R = nr;
-	
+
 	w_L = const_math_2pi * (double)(N_L - N_L_pre) / ((double)N * dt);
 	w_R = const_math_2pi * (double)(N_R - N_R_pre) / ((double)N * dt);
 	v = (r / 2.0) * (w_L + w_R);

@@ -14,9 +14,9 @@ public:
 	double get_r();
 	double get_L();
 	double get_dt();
-	void get_wheel_speed(double *wr, double *wl);
-	void get_twist(double *vc, double *wc);
-	void get_pose(double *xc, double *yc, double *thc);
+	void get_wheel_speed(double &wr, double &wl);
+	void get_twist(double &vc, double &wc);
+	void get_pose(double &xc, double &yc, double &thc);
 	void update(long long nr, long long nl);
 
 private:
