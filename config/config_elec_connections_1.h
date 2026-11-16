@@ -1,5 +1,5 @@
-#ifndef CONFIG_ELEC_CONNECTIONS
-#define CONFIG_ELEC_CONNECTIONS
+#ifndef CONFIG_ELEC_CONNECTIONS_1_H
+#define CONFIG_ELEC_CONNECTIONS_1_H
 
 #define MOTOR_1_PIN_A   8
 #define MOTOR_1_PIN_B   9
@@ -15,4 +15,4 @@
 #define ENC_2_PIN_A     2
 #define ENC_2_PIN_B     3
 
-#endif
+#endif // CONFIG_ELEC_CONNECTIONS_1_H

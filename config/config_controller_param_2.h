@@ -1,5 +1,5 @@
-#ifndef CONFIG_CONTROLLER
-#define CONFIG_CONTROLLER
+#ifndef CONFIG_CONTROLLER_2_H
+#define CONFIG_CONTROLLER_2_H
 
 #define Kp_R       0.0
 #define Ki_R       0.0
@@ -21,4 +21,4 @@
 #define D_FILTER_L false
 #define fc_L       50.0
 
-#endif
+#endif // CONFIG_CONTROLLER_2_H

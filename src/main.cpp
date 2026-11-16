@@ -10,7 +10,7 @@
 #include "Timer_utils.h"
 #include "PID_controller.h"
 #include "Diff_drive_unicycle.h"
-#include "../config/Config.h"
+#include "../config/config.h"
 
 Com_uart com_uart;
 Timer_utils timer(MAIN_LOOP_FREQ);
