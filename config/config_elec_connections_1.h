@@ -13,7 +13,7 @@
 
 #define ENC_1_PIN_A     18
 #define ENC_1_PIN_B     19
-#define ENC_1_REVERSE   false
+#define ENC_1_REVERSE   true
 
 #define ENC_2_PIN_A     2
 #define ENC_2_PIN_B     3

@@ -11,7 +11,7 @@
 
 #define ENC_PPR        3
 #define MOT_GEAR_RATIO 141
-#define MOT_SHAFT_CPR  (4*ENC_PPR*MOT_GEAR_RATIO) // (PPR*2)*2*N
+#define MOT_SHAFT_CPR  (4*ENC_PPR*MOT_GEAR_RATIO) // (PPR*2)*2*N // 1692
 #define PWM_MAX        255.0
 
 #endif // CONFIG_ROBOT_SPECS_1_H

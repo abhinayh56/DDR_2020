@@ -84,7 +84,7 @@ void Quadrature_enc::update()
 
 int64_t Quadrature_enc::getCount()
 {
-    return m_count_temp;
+    return m_count_temp * ((m_reverse == true) ? -1 : 1);
 }
 
 double Quadrature_enc::getAngle()
