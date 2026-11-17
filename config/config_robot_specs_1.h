@@ -4,10 +4,10 @@
 #define WHEEL_R        0.0425
 #define WHEEL_L        0.198 // 0.2
 
-#define V_C_MAX        0.6
-#define W_C_MAX        6.0
+#define V_C_MAX        0.185 // @ 250 deg / sec wheel speed
+#define W_C_MAX        1.850 // @ 250 deg / sec wheel speed
 #define V_BAT_MAX      12.0
-#define SAFETY_FACTOR  0.95
+#define SAFETY_FACTOR  0.99
 
 #define ENC_PPR        3
 #define MOT_GEAR_RATIO 141

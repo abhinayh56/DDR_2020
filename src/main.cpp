@@ -117,11 +117,13 @@ void loop()
 	wheel_odom.get_twist(actualLinearVelocity_C, actualAngularVelocity_C);
 	wheel_odom.get_wheel_speed(actualSpeedMotor_1, actualSpeedMotor_2);
 
-	Serial.print(actualPositionX_C * 1000.0);
+	Serial.print(actualSpeedMotor_1_Unfilt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.print(actualPositionY_C * 1000.0);
+	Serial.print(actualSpeedMotor_2_Unfilt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.print(actualAngle_C * 180.0 / M_PI);
+	Serial.print(actualSpeedMotor_1_Filt * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(actualSpeedMotor_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
 
 	// 2. ========================== Communication (RX) ==========================
@@ -154,12 +156,12 @@ void loop()
 	// 3. ====================== Run motor speed controller ======================
 	while(Serial.available()>0)
 	{
-		targetSpeedMotor_1 = Serial.readStringUntil('\n').toDouble();
-		targetSpeedMotor_2 = 0;
+		targetVoltageMotor_1 = Serial.readStringUntil('\n').toDouble();
+		targetVoltageMotor_2 = targetVoltageMotor_1;
 	}
 
-	targetVoltageMotor_2 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedMotor_2_Filt, D_FILTER_L);
-	targetVoltageMotor_1 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedMotor_1_Filt, D_FILTER_R);
+	// targetVoltageMotor_2 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedMotor_2_Filt, D_FILTER_L);
+	// targetVoltageMotor_1 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedMotor_1_Filt, D_FILTER_R);
 	
 	// 4. ============================ Command motors ============================
 	motorDriver.commandMotorA(targetVoltageMotor_1);
@@ -171,8 +173,6 @@ void loop()
 	timer.sleep();
 
 	t = micros();
-	Serial.print(0);
-	Serial.print(",");
-	Serial.println(25);
+	Serial.println(0);
 	t_last = t;
 }
