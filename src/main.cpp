@@ -3,12 +3,14 @@
 */
 
 #include <Arduino.h>
+#include "Timer_utils.h"
 #include "Com_uart.h"
 #include "L298N.h"
 #include "Quadrature_enc.h"
+#include "LPF_1.h"
+#include "PID_P.h"
 #include "Wheel_odom.h"
-#include "Timer_utils.h"
-#include "PID_controller.h"
+// #include "PID_controller.h"
 #include "Diff_drive_unicycle.h"
 #include "../config/config.h"
 
@@ -18,11 +20,18 @@ L298N motorDriver;
 Quadrature_enc encoder_1;
 Quadrature_enc encoder_2;
 
+LPF_1<double> lpf_speedEncoder_1;
+LPF_1<double> lpf_speedEncoder_2;
+PID_P<double> controllerMotor_1;
+PID_P<double> controllerMotor_2;
 
+double actual_W_motorA_raw  = 0.0;
+double actual_W_motorB_raw  = 0.0;
+double actual_W_motorA_filt = 0.0;
+double actual_W_motorB_filt = 0.0;
 
 Wheel_odom wheel_odom;
 Diff_drive_unicycle ddr_uni;
-PID_controller controller_R, controller_L;
 
 // feedback variables
 double x = 0;	// x coordinate of the robot
@@ -52,13 +61,6 @@ void setup()
 {
 	com_uart.init(Serial, 115200, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ);
 
-	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
-	wheel_odom.set_dt(1.0 / MAIN_LOOP_FREQ);
-
-	ddr_uni.set_param(WHEEL_R, WHEEL_L);
-	ddr_uni.set_v_max(V_C_MAX);
-	ddr_uni.set_w_max(W_C_MAX);
-
 	timer.init(MAIN_LOOP_FREQ);
 
 	motorDriver.config(V_BAT_MAX, PWM_MAX);
@@ -78,8 +80,18 @@ void setup()
 	encoder_1.init();
 	encoder_2.init();
 
-	controller_R.set_param(Kp_R, Ki_R, Kd_R, Kff_R, dt_R, I_max_R, u_max_R, fc_R);
-	controller_L.set_param(Kp_L, Ki_L, Kd_L, Kff_L, dt_L, I_max_L, u_max_L, fc_L);
+	lpf_speedEncoder_1.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
+	lpf_speedEncoder_2.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
+
+	controllerMotor_1.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
+	controllerMotor_2.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
+
+	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
+	wheel_odom.set_dt(dt_ODOM);
+
+	ddr_uni.set_param(WHEEL_R, WHEEL_L);
+	ddr_uni.set_v_max(V_C_MAX);
+	ddr_uni.set_w_max(W_C_MAX);
 }
 
 void loop()
@@ -88,6 +100,12 @@ void loop()
 	// 1.1. Update encoder feedback
 	encoder_1.update();
 	encoder_2.update();
+
+	actual_W_motorA_raw = encoderMotorA.getAngularSpeed();
+	actual_W_motorB_raw = encoderMotorB.getAngularSpeed();
+
+	actual_W_motorA_filt = lpf_wMotorA.update(actual_W_motorA_raw);
+	actual_W_motorB_filt = lpf_wMotorB.update(actual_W_motorB_raw);
 
 	// 1.2. Update odometry
 	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
@@ -125,8 +143,8 @@ void loop()
 	}
 
 	// 3. ====================== Run motor speed controller ======================
-	v_R_0 = controller_R.update(w_R_0, w_R, D_FILTER_R);
-	v_L_0 = controller_L.update(w_L_0, w_L, D_FILTER_L);
+	v_R_0 = controllerMotor_1.update(w_R_0, actual_W_motorA_filt, D_FILTER_R);
+	v_L_0 = controllerMotor_2.update(w_L_0, actual_W_motorB_filt, D_FILTER_L);
 
 	// 4. ============================ Command motors ============================
 	motorDriver.commandMotorA(v_R_0);
