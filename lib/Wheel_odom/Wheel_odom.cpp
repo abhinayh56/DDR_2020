@@ -4,10 +4,10 @@ Wheel_odom::Wheel_odom()
 {
 }
 
-void Wheel_odom::set_param(long N_, double r_, double L_)
+void Wheel_odom::set_param(long N_, double L_, double R_)
 {
 	N = N_;
-	r = r_;
+	r = R_;
 	L = L_;
 }
 
@@ -36,7 +36,7 @@ double Wheel_odom::get_dt()
 	return dt;
 }
 
-void Wheel_odom::get_wheel_speed(double &wr, double &wl)
+void Wheel_odom::get_wheel_speed(double &wl, double &wr)
 {
 	wr = w_R;
 	wl = w_L;
@@ -55,7 +55,7 @@ void Wheel_odom::get_pose(double &xc, double &yc, double &thc)
 	thc = th;
 }
 
-void Wheel_odom::update(long long nr, long long nl)
+void Wheel_odom::update(long long nl, long long nr)
 {
 	N_L = nl;
 	N_R = nr;

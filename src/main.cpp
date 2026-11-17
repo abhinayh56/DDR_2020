@@ -88,7 +88,7 @@ void setup()
 	controllerMotor_1.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
 	controllerMotor_2.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
 
-	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_R, WHEEL_L);
+	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_L, WHEEL_R);
 	wheel_odom.set_dt(dt_ODOM);
 
 	// ddr_uni.set_param(WHEEL_R, WHEEL_L);
@@ -115,7 +115,7 @@ void loop()
 	// 1.3. Get odometry feedback
 	wheel_odom.get_pose(actualPositionX_C, actualPositionY_C, actualAngle_C);
 	wheel_odom.get_twist(actualLinearVelocity_C, actualAngularVelocity_C);
-	wheel_odom.get_wheel_speed(actualSpeedMotor_2, actualSpeedMotor_1);
+	wheel_odom.get_wheel_speed(actualSpeedMotor_1, actualSpeedMotor_2);
 
 	Serial.print(actualPositionX_C * 1000.0);
 	Serial.print(",");
