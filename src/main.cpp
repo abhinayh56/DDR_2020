@@ -4,8 +4,8 @@
 
 #include <Arduino.h>
 #include "Com_uart.h"
-#include "Motor_interface.h"
-#include "Encoder_interface.h"
+#include "L298N.h"
+#include "Quadrature_enc.h"
 #include "Wheel_odom.h"
 #include "Timer_utils.h"
 #include "PID_controller.h"
@@ -14,18 +14,17 @@
 
 Com_uart com_uart;
 Timer_utils timer(MAIN_LOOP_FREQ);
-Motor_interface motor_interface;
-volatile long long Encoder_interface::count1 = 0;
-volatile long long Encoder_interface::count2 = 0;
-Encoder_interface encoder_interface;
+L298N motorDriver;
+Quadrature_enc encoder_1;
+Quadrature_enc encoder_2;
+
+
+
 Wheel_odom wheel_odom;
 Diff_drive_unicycle ddr_uni;
 PID_controller controller_R, controller_L;
 
 // feedback variables
-long long count_r = 0; // right wheel encoder count
-long long count_l = 0; // left wheel encoder count
-
 double x = 0;	// x coordinate of the robot
 double y = 0;	// y coordinate of the robot
 double th = 0;	// orientation of the robot
@@ -62,10 +61,22 @@ void setup()
 
 	timer.init(MAIN_LOOP_FREQ);
 
-	encoder_interface.config();
+	motorDriver.config(V_BAT_MAX, PWM_MAX);
+	motorDriver.configMotorA(MOTOR_1_PIN_PWM, MOTOR_1_PIN_A, MOTOR_1_PIN_B, MOTOR_1_REVERSE);
+	motorDriver.configMotorB(MOTOR_2_PIN_PWM, MOTOR_2_PIN_A, MOTOR_2_PIN_B, MOTOR_2_REVERSE);
 
-	motor_interface.config();
-	motor_interface.command_voltage(0, 0);
+	motorDriver.init();
+	motorDriver.initMotorA();
+	motorDriver.initMotorB();
+
+	motorDriver.enableMotorA();
+	motorDriver.enableMotorB();
+
+	encoder_1.config(MOT_SHAFT_CPR, ENC_1_PIN_A, ENC_1_PIN_B, []() { encoder_1.isrFunction(); }, ENC_1_REVERSE);
+	encoder_2.config(MOT_SHAFT_CPR, ENC_2_PIN_A, ENC_2_PIN_B, []() { encoder_2.isrFunction(); }, ENC_2_REVERSE);
+
+	encoder_1.init();
+	encoder_2.init();
 
 	controller_R.set_param(Kp_R, Ki_R, Kd_R, Kff_R, dt_R, I_max_R, u_max_R, fc_R);
 	controller_L.set_param(Kp_L, Ki_L, Kd_L, Kff_L, dt_L, I_max_L, u_max_L, fc_L);
@@ -74,14 +85,12 @@ void setup()
 void loop()
 {
 	// 1. =============================== Odometry ===============================
-	// 1.1. Get encoder feedback
-	noInterrupts();
-	count_r = Encoder_interface::count1;
-	count_l = Encoder_interface::count2;
-	interrupts();
+	// 1.1. Update encoder feedback
+	encoder_1.update();
+	encoder_2.update();
 
 	// 1.2. Update odometry
-	wheel_odom.update(count_r, count_l);
+	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
 
 	// 1.3. Get odometry feedback
 	wheel_odom.get_pose(x, y, th);
@@ -120,7 +129,8 @@ void loop()
 	v_L_0 = controller_L.update(w_L_0, w_L, D_FILTER_L);
 
 	// 4. ============================ Command motors ============================
-	motor_interface.command_voltage(v_R_0, v_L_0);
+	motorDriver.commandMotorA(v_R_0);
+	motorDriver.commandMotorB(v_L_0);
 
 	// 5. ========================== Communication (TX) ==========================
 	com_uart.com_tx(drive_mode, x, y, th, v, w, w_R, w_L);

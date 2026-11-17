@@ -2,6 +2,7 @@
 #define MOTOR_INTERFACE_H
 
 #include <Arduino.h>
+#include "L298N.h"
 #include "../../config/Config.h"
 
 class Motor_interface
@@ -18,6 +19,9 @@ public:
     void command_pwm(float pwm_1, float pwm_2);
 
     void command_voltage(float v_1, float v_2);
+
+private:
+    L298N motorDriver;
 };
 
 #endif // MOTOR_INTERFACE_H
