@@ -82,11 +82,11 @@ void setup()
 	encoder_1.init();
 	encoder_2.init();
 
-	lpfSpeedEncoder_1.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
-	lpfSpeedEncoder_2.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
+	lpfSpeedEncoder_1.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
+	lpfSpeedEncoder_2.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
 
-	controllerMotor_1.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
-	controllerMotor_2.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
+	controllerMotor_1.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
+	controllerMotor_2.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
 
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_L, WHEEL_R);
 	wheel_odom.set_dt(dt_ODOM);
@@ -158,12 +158,12 @@ void loop()
 		targetSpeedMotor_2 = 0;
 	}
 
-	targetVoltageMotor_2 = controllerMotor_1.update(targetSpeedMotor_2, actualSpeedMotor_1_Filt, D_FILTER_R);
-	targetVoltageMotor_1 = controllerMotor_2.update(targetSpeedMotor_1, actualSpeedMotor_2_Filt, D_FILTER_L);
+	targetVoltageMotor_2 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedMotor_2_Filt, D_FILTER_L);
+	targetVoltageMotor_1 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedMotor_1_Filt, D_FILTER_R);
 	
 	// 4. ============================ Command motors ============================
-	motorDriver.commandMotorA(targetVoltageMotor_2);
-	motorDriver.commandMotorB(targetVoltageMotor_1);
+	motorDriver.commandMotorA(targetVoltageMotor_1);
+	motorDriver.commandMotorB(targetVoltageMotor_2);
 
 	// 5. ========================== Communication (TX) ==========================
 	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedMotor_2, actualSpeedMotor_1);
