@@ -147,18 +147,22 @@ void loop()
 	// 3. ====================== Run motor speed controller ======================
 	while(Serial.available()>0)
 	{
-		targetSpeedMotor_1 = Serial.readStringUntil('\n').toDouble();
+		targetSpeedMotor_1 = Serial.readStringUntil('\n').toDouble()  * M_PI / 180.0;
 		targetSpeedMotor_2 = targetVoltageMotor_1 * 0;
 	}
 
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1 * M_PI / 180.0, actualSpeedWheel_1_Filt, 0);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2 * M_PI / 180.0, actualSpeedWheel_2_Filt, 0);
+	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedWheel_1_Filt, 0);
+	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedWheel_2_Filt, 0);
 
-	Serial.print(targetSpeedMotor_1);
+	Serial.print(targetSpeedMotor_1 * 180.0 / M_PI);
 	Serial.print(",");
 	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.print(targetSpeedMotor_2);
+	Serial.print(targetSpeedMotor_2 * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(targetVoltageMotor_1);
 	Serial.print(",");
 	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
