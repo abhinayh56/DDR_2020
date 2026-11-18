@@ -45,10 +45,10 @@ double actualSpeedWheel_1 = 0;      // angular velocity of left wheel
 // setpoint variables
 // double targetLinearVelocity_C = 0;  // robot linear velocity setpoint
 // double targetAngularVelocity_C = 0; // robot  angular velocity setpoint
-double targetSpeedMotor_2 = 0;      // angular velocity setpoint right wheel
 double targetSpeedMotor_1 = 0;      // angular velocity setpoint left wheel
-double targetVoltageMotor_2 = 0;    // voltage setpoint right motor
+double targetSpeedMotor_2 = 0;      // angular velocity setpoint right wheel
 double targetVoltageMotor_1 = 0;    // voltage setpoint left motor
+double targetVoltageMotor_2 = 0;    // voltage setpoint right motor
 
 // communication variables
 // uint8_t drive_mode = Drive_mode::NONE;  // drive mode received
