@@ -49,6 +49,8 @@ double targetSpeedMotor_1 = 0;      // angular velocity setpoint left wheel
 double targetSpeedMotor_2 = 0;      // angular velocity setpoint right wheel
 double targetVoltageMotor_1 = 0;    // voltage setpoint left motor
 double targetVoltageMotor_2 = 0;    // voltage setpoint right motor
+double voltageFFMotor_1 = 0;        // voltage feed forward left motor
+double voltageFFMotor_2 = 0;        // voltage feed forward right motor
 
 // communication variables
 // uint8_t drive_mode = Drive_mode::NONE;  // drive mode received
@@ -151,8 +153,11 @@ void loop()
 		targetSpeedMotor_2 = targetVoltageMotor_1 * 0;
 	}
 
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedWheel_1_Filt, 0);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedWheel_2_Filt, 0);
+	voltageFFMotor_1 = 0;
+	voltageFFMotor_2 = 0;
+
+	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedWheel_1_Filt, voltageFFMotor_1);
+	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedWheel_2_Filt, voltageFFMotor_2);
 
 	Serial.print(targetSpeedMotor_1 * 180.0 / M_PI);
 	Serial.print(",");
