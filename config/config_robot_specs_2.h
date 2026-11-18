@@ -2,7 +2,7 @@
 #define CONFIG_ROBOT_SPECS_2_H
 
 #define WHEEL_R        0.0425
-#define WHEEL_L        0.198 // 0.2
+#define WHEEL_L        0.199 // 0.2
 
 #define V_C_MAX        0.185 // @ 250 deg / sec wheel speed
 #define W_C_MAX        1.850 // @ 250 deg / sec wheel speed
