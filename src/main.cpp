@@ -10,7 +10,7 @@
 #include "LPF_1.h"
 #include "PID_P.h"
 #include "Wheel_odom.h"
-#include "Diff_drive_unicycle.h"
+// #include "Diff_drive_unicycle.h"
 #include "../config/config.h"
 
 // Com_uart comUart;
@@ -31,12 +31,12 @@ double actualSpeedMotor_1_Filt = 0.0;
 double actualSpeedMotor_2_Filt = 0.0;
 
 Wheel_odom wheel_odom;
-Diff_drive_unicycle ddr_uni;
+// Diff_drive_unicycle ddr_uni;
 
 // feedback variables
-double actualPositionX_C = 0;	   // x coordinate of the robot
-double actualPositionY_C = 0;	   // y coordinate of the robot
-double actualAngle_C = 0;	       // orientation of the robot
+double actualPositionX_C = 0;	    // x coordinate of the robot
+double actualPositionY_C = 0;	    // y coordinate of the robot
+double actualAngle_C = 0;	        // orientation of the robot
 double actualLinearVelocity_C = 0;  // linear velocity of the robot
 double actualAngularVelocity_C = 0; // angular velocity of the robot
 double actualSpeedMotor_2 = 0;      // angular velocity of right wheel
@@ -45,10 +45,10 @@ double actualSpeedMotor_1 = 0;      // angular velocity of left wheel
 // setpoint variables
 // double targetLinearVelocity_C = 0;  // robot linear velocity setpoint
 // double targetAngularVelocity_C = 0; // robot  angular velocity setpoint
-double targetSpeedMotor_2 = 0;         // angular velocity setpoint right wheel
-double targetSpeedMotor_1 = 0;         // angular velocity setpoint left wheel
-double targetVoltageMotor_2 = 0;       // voltage setpoint right motor
-double targetVoltageMotor_1 = 0;       // voltage setpoint left motor
+double targetSpeedMotor_2 = 0;      // angular velocity setpoint right wheel
+double targetSpeedMotor_1 = 0;      // angular velocity setpoint left wheel
+double targetVoltageMotor_2 = 0;    // voltage setpoint right motor
+double targetVoltageMotor_1 = 0;    // voltage setpoint left motor
 
 // communication variables
 // uint8_t drive_mode = Drive_mode::NONE;  // drive mode received
@@ -91,9 +91,9 @@ void setup()
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_L, WHEEL_R);
 	wheel_odom.set_dt(dt_ODOM);
 
-	ddr_uni.set_param(WHEEL_L, WHEEL_R);
-	ddr_uni.set_v_max(V_C_MAX);
-	ddr_uni.set_w_max(W_C_MAX);
+	// ddr_uni.set_param(WHEEL_L, WHEEL_R);
+	// ddr_uni.set_v_max(V_C_MAX);
+	// ddr_uni.set_w_max(W_C_MAX);
 }
 
 void loop()
@@ -151,8 +151,8 @@ void loop()
 		targetSpeedMotor_2 = targetVoltageMotor_1 * 0;
 	}
 
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1 * M_PI / 180.0, actualSpeedMotor_1_Filt, D_FILTER_L);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2 * M_PI / 180.0, actualSpeedMotor_2_Filt, D_FILTER_R);
+	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1 * M_PI / 180.0, actualSpeedMotor_1_Filt, 0);
+	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2 * M_PI / 180.0, actualSpeedMotor_2_Filt, 0);
 
 	Serial.print(targetSpeedMotor_1);
 	Serial.print(",");
