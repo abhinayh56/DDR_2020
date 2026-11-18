@@ -85,8 +85,8 @@ void setup()
 	lpfSpeedWheel_1.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
 	lpfSpeedWheel_2.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
 
-	controllerMotor_1.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
-	controllerMotor_2.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
+	controllerMotor_1.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, D_FILTER_L, fc_L);
+	controllerMotor_2.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, D_FILTER_R, fc_R);
 
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_L, WHEEL_R);
 	wheel_odom.set_dt(dt_ODOM);
