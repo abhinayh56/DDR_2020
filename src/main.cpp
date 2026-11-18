@@ -163,7 +163,7 @@ void loop()
 	// 3. ====================== Run motor speed controller ======================
 	while(Serial.available()>0)
 	{
-		targetSpeedMotor_1 = Serial.readStringUntil('\n').toDouble()  * M_PI / 180.0;
+		targetSpeedMotor_1 = Serial.readStringUntil('\n').toDouble();
 		targetSpeedMotor_2 = targetVoltageMotor_1 * 0;
 	}
 
