@@ -42,7 +42,7 @@ void PID_P<T>::set_param(T dt_, T Kp_, T Ki_, T Kd_, T I_max_, T u_max_, bool d_
 }
 
 template <typename T>
-T PID_P<T>::update(T x_0, T x, T u_ff_ = 0)
+T PID_P<T>::update(T x_0, T x, T u_ff_)
 {
     T e_k = x_0 - x;
     u_ff = u_ff_;

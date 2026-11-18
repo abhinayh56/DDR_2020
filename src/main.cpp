@@ -19,16 +19,16 @@ L298N motorDriver;
 Quadrature_enc encoder_1;
 Quadrature_enc encoder_2;
 
-LPF_1<double> lpfSpeedEncoder_1;
-LPF_1<double> lpfSpeedEncoder_2;
+LPF_1<double> lpfSpeedWheel_1;
+LPF_1<double> lpfSpeedWheel_2;
 
 PID_P<double> controllerMotor_1;
 PID_P<double> controllerMotor_2;
 
-double actualSpeedMotor_1_Unfilt  = 0.0;
-double actualSpeedMotor_2_Unfilt  = 0.0;
-double actualSpeedMotor_1_Filt = 0.0;
-double actualSpeedMotor_2_Filt = 0.0;
+double actualSpeedWheel_1_Unfilt  = 0.0;
+double actualSpeedWheel_2_Unfilt  = 0.0;
+double actualSpeedWheel_1_Filt = 0.0;
+double actualSpeedWheel_2_Filt = 0.0;
 
 Wheel_odom wheel_odom;
 // Diff_drive_unicycle ddr_uni;
@@ -39,8 +39,8 @@ double actualPositionY_C = 0;	    // y coordinate of the robot
 double actualAngle_C = 0;	        // orientation of the robot
 double actualLinearVelocity_C = 0;  // linear velocity of the robot
 double actualAngularVelocity_C = 0; // angular velocity of the robot
-double actualSpeedMotor_2 = 0;      // angular velocity of right wheel
-double actualSpeedMotor_1 = 0;      // angular velocity of left wheel
+double actualSpeedWheel_2 = 0;      // angular velocity of right wheel
+double actualSpeedWheel_1 = 0;      // angular velocity of left wheel
 
 // setpoint variables
 // double targetLinearVelocity_C = 0;  // robot linear velocity setpoint
@@ -82,8 +82,8 @@ void setup()
 	encoder_1.init();
 	encoder_2.init();
 
-	lpfSpeedEncoder_1.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
-	lpfSpeedEncoder_2.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
+	lpfSpeedWheel_1.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
+	lpfSpeedWheel_2.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
 
 	controllerMotor_1.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, false, fc_L);
 	controllerMotor_2.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, false, fc_R);
@@ -103,11 +103,11 @@ void loop()
 	encoder_1.update();
 	encoder_2.update();
 
-	actualSpeedMotor_1_Unfilt = encoder_1.getAngularSpeed();
-	actualSpeedMotor_2_Unfilt = encoder_2.getAngularSpeed();
+	actualSpeedWheel_1_Unfilt = encoder_1.getAngularSpeed();
+	actualSpeedWheel_2_Unfilt = encoder_2.getAngularSpeed();
 
-	actualSpeedMotor_1_Filt = lpfSpeedEncoder_1.update(actualSpeedMotor_1_Unfilt);
-	actualSpeedMotor_2_Filt = lpfSpeedEncoder_2.update(actualSpeedMotor_2_Unfilt);
+	actualSpeedWheel_1_Filt = lpfSpeedWheel_1.update(actualSpeedWheel_1_Unfilt);
+	actualSpeedWheel_2_Filt = lpfSpeedWheel_2.update(actualSpeedWheel_2_Unfilt);
 
 	// 1.2. Update odometry
 	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
@@ -115,7 +115,7 @@ void loop()
 	// 1.3. Get odometry feedback
 	wheel_odom.get_pose(actualPositionX_C, actualPositionY_C, actualAngle_C);
 	wheel_odom.get_twist(actualLinearVelocity_C, actualAngularVelocity_C);
-	wheel_odom.get_wheel_speed(actualSpeedMotor_1, actualSpeedMotor_2);
+	wheel_odom.get_wheel_speed(actualSpeedWheel_1, actualSpeedWheel_2);
 
 	// 2. ========================== Communication (RX) ==========================
 	// 2.1. Get drive mode and command from UART
@@ -151,16 +151,16 @@ void loop()
 		targetSpeedMotor_2 = targetVoltageMotor_1 * 0;
 	}
 
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1 * M_PI / 180.0, actualSpeedMotor_1_Filt, 0);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2 * M_PI / 180.0, actualSpeedMotor_2_Filt, 0);
+	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1 * M_PI / 180.0, actualSpeedWheel_1_Filt, 0);
+	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2 * M_PI / 180.0, actualSpeedWheel_2_Filt, 0);
 
 	Serial.print(targetSpeedMotor_1);
 	Serial.print(",");
-	Serial.print(actualSpeedMotor_1_Filt * 180.0 / M_PI);
+	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
 	Serial.print(",");
 	Serial.print(targetSpeedMotor_2);
 	Serial.print(",");
-	Serial.print(actualSpeedMotor_2_Filt * 180.0 / M_PI);
+	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
 	
 	// 4. ============================ Command motors ============================
@@ -168,7 +168,7 @@ void loop()
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 
 	// 5. ========================== Communication (TX) ==========================
-	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedMotor_2, actualSpeedMotor_1);
+	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedWheel_2, actualSpeedWheel_1);
 
 	timer.sleep();
 
