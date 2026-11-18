@@ -9,7 +9,7 @@
 
 #define dt_ODOM    (1.0 / MAIN_LOOP_FREQ)
 
-#define Kp_L       5.0
+#define Kp_L       0.0
 #define Ki_L       0.0
 #define Kd_L       0.0
 #define dt_L       (1.0 / MAIN_LOOP_FREQ)

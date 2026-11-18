@@ -111,6 +111,20 @@ void loop()
 	actualSpeedWheel_1_Filt = lpfSpeedWheel_1.update(actualSpeedWheel_1_Unfilt);
 	actualSpeedWheel_2_Filt = lpfSpeedWheel_2.update(actualSpeedWheel_2_Unfilt);
 
+	Serial.print((double)encoder_1.getCount());
+	Serial.print(",");
+	Serial.print((double)encoder_2.getCount());
+	Serial.print(",");
+
+	// Serial.print(actualSpeedWheel_1_Unfilt * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_2_Unfilt * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
+	// Serial.print(",");
+
 	// 1.2. Update odometry
 	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
 
@@ -158,19 +172,6 @@ void loop()
 
 	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedMotor_1, actualSpeedWheel_1_Filt, voltageFFMotor_1);
 	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedMotor_2, actualSpeedWheel_2_Filt, voltageFFMotor_2);
-
-	Serial.print(targetSpeedMotor_1 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetSpeedMotor_2 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetVoltageMotor_1);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-	Serial.print(",");
 	
 	// 4. ============================ Command motors ============================
 	motorDriver.commandMotorA(targetVoltageMotor_1);
