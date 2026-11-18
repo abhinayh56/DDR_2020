@@ -171,11 +171,11 @@ void loop()
 	while(Serial.available()>0)
 	{
 		targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
-		targetSpeedWheel_2 = targetSpeedWheel_1 * 0;
+		targetSpeedWheel_2 = targetSpeedWheel_1;
 	}
 
-	voltageFFMotor_1 = 0.0007*pow(targetSpeedWheel_1,5) + 0.0003*pow(targetSpeedWheel_1,4) - 0.0027*pow(targetSpeedWheel_1,3) + 0.0082*pow(targetSpeedWheel_1,2) + 1.3925*targetSpeedWheel_1;
-	voltageFFMotor_2 = 0.0007*pow(targetSpeedWheel_2,5) + 0.0003*pow(targetSpeedWheel_2,4) - 0.0027*pow(targetSpeedWheel_2,3) + 0.0082*pow(targetSpeedWheel_2,2) + 1.3925*targetSpeedWheel_2;
+	voltageFFMotor_1 = SPEED_2_VOLTAGE_R(targetSpeedWheel_1);
+	voltageFFMotor_2 = SPEED_2_VOLTAGE_L(targetSpeedWheel_2);
 
 	voltageFFMotor_1 = saturate<double>(voltageFFMotor_1, -V_BAT_MAX, V_BAT_MAX);
 	voltageFFMotor_2 = saturate<double>(voltageFFMotor_2, -V_BAT_MAX, V_BAT_MAX);
@@ -190,6 +190,8 @@ void loop()
 	Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
 	Serial.print(",");
 	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
 	Serial.print(targetVoltageMotor_1);
 	Serial.print(",");

@@ -27,4 +27,7 @@
 #define D_FILTER_R false
 #define fc_R       (MAIN_LOOP_FREQ * 0.5)
 
+#define SPEED_2_VOLTAGE_R(x) (0.0007*pow(x,5) + 0.0003*pow(x,4) - 0.0027*pow(x,3) + 0.0082*pow(x,2) + 1.3925*x);
+#define SPEED_2_VOLTAGE_L(x) (0.0007*pow(x,5) + 0.0003*pow(x,4) - 0.0027*pow(x,3) + 0.0082*pow(x,2) + 1.3925*x);
+
 #endif // CONFIG_CONTROLLER_1_H
