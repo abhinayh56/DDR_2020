@@ -10,7 +10,7 @@
 #include "LPF_1.h"
 #include "PID_P.h"
 #include "Wheel_odom.h"
-// #include "Diff_drive_unicycle.h"
+#include "Diff_drive_unicycle.h"
 #include "../config/config.h"
 
 // Com_uart comUart;
@@ -31,7 +31,7 @@ double actualSpeedMotor_1_Filt = 0.0;
 double actualSpeedMotor_2_Filt = 0.0;
 
 Wheel_odom wheel_odom;
-// Diff_drive_unicycle ddr_uni;
+Diff_drive_unicycle ddr_uni;
 
 // feedback variables
 double actualPositionX_C = 0;	   // x coordinate of the robot
@@ -91,9 +91,9 @@ void setup()
 	wheel_odom.set_param(MOT_SHAFT_CPR, WHEEL_L, WHEEL_R);
 	wheel_odom.set_dt(dt_ODOM);
 
-	// ddr_uni.set_param(WHEEL_R, WHEEL_L);
-	// ddr_uni.set_v_max(V_C_MAX);
-	// ddr_uni.set_w_max(W_C_MAX);
+	ddr_uni.set_param(WHEEL_L, WHEEL_R);
+	ddr_uni.set_v_max(V_C_MAX);
+	ddr_uni.set_w_max(W_C_MAX);
 }
 
 void loop()

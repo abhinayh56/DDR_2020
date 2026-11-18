@@ -4,10 +4,10 @@ Diff_drive_unicycle::Diff_drive_unicycle()
 {
 }
 
-void Diff_drive_unicycle::set_param(double r_, double L_)
+void Diff_drive_unicycle::set_param(double L_, double r_)
 {
-	r = r_;
 	L = L_;
+	r = r_;
 }
 
 void Diff_drive_unicycle::set_v_max(double V_max_)

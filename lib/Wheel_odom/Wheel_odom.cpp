@@ -4,10 +4,10 @@ Wheel_odom::Wheel_odom()
 {
 }
 
-void Wheel_odom::set_param(long N_, double L_, double R_)
+void Wheel_odom::set_param(long N_, double L_, double r_)
 {
 	N = N_;
-	r = R_;
+	r = r_;
 	L = L_;
 }
 
