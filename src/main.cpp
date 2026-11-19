@@ -133,12 +133,12 @@ void loop()
 	wheel_odom.get_twist(actualLinearVelocity_C, actualAngularVelocity_C);
 	wheel_odom.get_wheel_speed(actualSpeedWheel_1, actualSpeedWheel_2);
 
-	// Serial.print(actualPositionX_C * 1000.0);
-	// Serial.print(",");
-	// Serial.print(actualPositionY_C * 1000.0);
-	// Serial.print(",");
-	// Serial.print(actualAngle_C * 180.0 / M_PI);
-	// Serial.print(",");
+	Serial.print(actualPositionX_C * 1000.0);
+	Serial.print(",");
+	Serial.print(actualPositionY_C * 1000.0);
+	Serial.print(",");
+	Serial.print(actualAngle_C * 180.0 / M_PI);
+	Serial.print(",");
 
 	// 2. ========================== Communication (RX) ==========================
 	// 2.1. Get drive mode and command from UART
@@ -168,33 +168,31 @@ void loop()
 	// }
 
 	// 3. ====================== Run motor speed controller ======================
-	while(Serial.available()>0)
-	{
-		targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
-		targetSpeedWheel_2 = targetSpeedWheel_1;
-	}
+	// while(Serial.available()>0)
+	// {
+	// 	targetVoltageMotor_1 = Serial.readStringUntil('\n').toDouble();
+	// 	targetVoltageMotor_2 = targetVoltageMotor_1;
+	// }
 
-	voltageFFMotor_1 = SPEED_2_VOLTAGE_R(targetSpeedWheel_1);
-	voltageFFMotor_2 = SPEED_2_VOLTAGE_L(targetSpeedWheel_2);
+	// voltageFFMotor_1 = SPEED_2_VOLTAGE_R(targetSpeedWheel_1);
+	// voltageFFMotor_2 = SPEED_2_VOLTAGE_L(targetSpeedWheel_2);
 
-	voltageFFMotor_1 = saturate<double>(voltageFFMotor_1, -V_BAT_MAX, V_BAT_MAX);
-	voltageFFMotor_2 = saturate<double>(voltageFFMotor_2, -V_BAT_MAX, V_BAT_MAX);
+	// voltageFFMotor_1 = saturate<double>(voltageFFMotor_1, -V_BAT_MAX, V_BAT_MAX);
+	// voltageFFMotor_2 = saturate<double>(voltageFFMotor_2, -V_BAT_MAX, V_BAT_MAX);
 
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, voltageFFMotor_1);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, voltageFFMotor_2);
+	// targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, voltageFFMotor_1);
+	// targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, voltageFFMotor_2);
 	
 	// 4. ============================ Command motors ============================
 	motorDriver.commandMotorA(targetVoltageMotor_1);
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 
-	Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetVoltageMotor_1);
-	Serial.print(",");
+	// Serial.print(targetVoltageMotor_1);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
+	// Serial.print(",");
 
 	// 5. ========================== Communication (TX) ==========================
 	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedWheel_2, actualSpeedWheel_1);

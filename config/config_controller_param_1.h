@@ -2,10 +2,10 @@
 #define CONFIG_CONTROLLER_1_H
 
 #define dt_LPF_1_SPEED_L (1.0 / MAIN_LOOP_FREQ)
-#define fc_LPF_1_SPEED_L 6.0
+#define fc_LPF_1_SPEED_L 5
 
 #define dt_LPF_1_SPEED_R (1.0 / MAIN_LOOP_FREQ)
-#define fc_LPF_1_SPEED_R 6.0
+#define fc_LPF_1_SPEED_R 5
 
 #define dt_ODOM    (1.0 / MAIN_LOOP_FREQ)
 
