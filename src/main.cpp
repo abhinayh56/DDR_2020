@@ -297,8 +297,8 @@ void loop()
 	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
 
-	voltageFFMotor_1 = motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
-	voltageFFMotor_2 = motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
+	voltageFFMotor_1 = 0 * motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
+	voltageFFMotor_2 = 0 * motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
 
 	Serial.print(voltageFFMotor_1);
 	Serial.print(",");
