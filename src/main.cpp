@@ -23,8 +23,8 @@ Quadrature_enc encoder_2;
 LPF_1<double> lpfSpeedWheel_1;
 LPF_1<double> lpfSpeedWheel_2;
 
-Motor_model<double> motorModel_1;
-Motor_model<double> motorModel_2;
+// Motor_model<double> motorModel_1;
+// Motor_model<double> motorModel_2;
 
 PID_P<double> controllerMotor_1;
 PID_P<double> controllerMotor_2;
@@ -198,8 +198,8 @@ void setup()
 	lpfSpeedWheel_1.config(fc_LPF_1_SPEED_L, dt_LPF_1_SPEED_L);
 	lpfSpeedWheel_2.config(fc_LPF_1_SPEED_R, dt_LPF_1_SPEED_R);
 
-	motorModel_1.assign_data(data_wv_motor_1, num_data_motor_1);
-	motorModel_2.assign_data(data_wv_motor_2, num_data_motor_2);
+	// motorModel_1.assign_data(data_wv_motor_1, num_data_motor_1);
+	// motorModel_2.assign_data(data_wv_motor_2, num_data_motor_2);
 
 	controllerMotor_1.init(dt_L, Kp_L, Ki_L, Kd_L, I_max_L, u_max_L, D_FILTER_L, fc_L);
 	controllerMotor_2.init(dt_R, Kp_R, Ki_R, Kd_R, I_max_R, u_max_R, D_FILTER_R, fc_R);
@@ -297,8 +297,8 @@ void loop()
 	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 	Serial.print(",");
 
-	voltageFFMotor_1 = 0 * motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
-	voltageFFMotor_2 = 0 * motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
+	voltageFFMotor_1 = 0; // motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
+	voltageFFMotor_2 = 0; // motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
 
 	Serial.print(voltageFFMotor_1);
 	Serial.print(",");
