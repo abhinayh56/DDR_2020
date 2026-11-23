@@ -168,13 +168,13 @@ double voltageFFMotor_2 = 0;        // voltage feed forward right motor
 // double cmd_1 = 0.0;					   // command 1 received
 // double cmd_2 = 0.0;					   // command 2 received
 
-uint64_t t_last = 0;
-uint64_t t = 0;
+// uint64_t t_last = 0;
+// uint64_t t = 0;
 
 void setup()
 {
 	// comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ);
-	Serial.begin(115200);
+	// Serial.begin(115200);
 
 	timer.init(MAIN_LOOP_FREQ);
 
@@ -282,31 +282,31 @@ void loop()
 	// }
 
 	// 3. ====================== Run motor speed controller ======================
-	while(Serial.available()>0)
-	{
-		targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
-		targetSpeedWheel_2 = targetSpeedWheel_1;
-	}
+	// while(Serial.available()>0)
+	// {
+	// 	targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
+	// 	targetSpeedWheel_2 = targetSpeedWheel_1;
+	// }
 
-	Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetSpeedWheel_2 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-	Serial.print(",");
+	// Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(targetSpeedWheel_2 * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
+	// Serial.print(",");
+	// Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
+	// Serial.print(",");
 
-	voltageFFMotor_1 = 0; // motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
-	voltageFFMotor_2 = 0; // motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
+	// voltageFFMotor_1 = 0; // motorModel_1.getV(targetSpeedWheel_1 * 180.0 / M_PI);
+	// voltageFFMotor_2 = 0; // motorModel_2.getV(targetSpeedWheel_2 * 180.0 / M_PI);
 
-	Serial.print(voltageFFMotor_1);
-	Serial.print(",");
-	Serial.print(voltageFFMotor_2);
-	Serial.print(",");
+	// Serial.print(voltageFFMotor_1);
+	// Serial.print(",");
+	// Serial.print(voltageFFMotor_2);
+	// Serial.print(",");
 
-	voltageFFMotor_1 = saturate<double>(voltageFFMotor_1, -V_BAT_MAX, V_BAT_MAX);
-	voltageFFMotor_2 = saturate<double>(voltageFFMotor_2, -V_BAT_MAX, V_BAT_MAX);
+	// voltageFFMotor_1 = saturate<double>(voltageFFMotor_1, -V_BAT_MAX, V_BAT_MAX);
+	// voltageFFMotor_2 = saturate<double>(voltageFFMotor_2, -V_BAT_MAX, V_BAT_MAX);
 
 	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, voltageFFMotor_1);
 	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, voltageFFMotor_2);
@@ -315,10 +315,10 @@ void loop()
 	motorDriver.commandMotorA(targetVoltageMotor_1);
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 
-	Serial.print(targetVoltageMotor_1);
-	Serial.print(",");
-	Serial.print(targetVoltageMotor_2);
-	Serial.print(",");
+	// Serial.print(targetVoltageMotor_1);
+	// Serial.print(",");
+	// Serial.print(targetVoltageMotor_2);
+	// Serial.print(",");
 	// Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
 	// Serial.print(",");
 	// Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
@@ -329,7 +329,7 @@ void loop()
 
 	timer.sleep();
 
-	t = micros();
-	Serial.println(0);
-	t_last = t;
+	// t = micros();
+	// Serial.println(0);
+	// t_last = t;
 }
