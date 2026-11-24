@@ -1,7 +1,7 @@
 import serial
 import type_conversion as tc
 
-port = '/dev/ttyACM0'
+port = 'COM7'
 baudrate = 115200
 timeout = 1.0
 
@@ -36,12 +36,13 @@ ser.open()
 
 while True:
     data_byte_arr = ser.read_all()
+    # print("data_byte_arr: ", data_byte_arr)
     for i in range(0,len(data_byte_arr)):
         data_byte = data_byte_arr[i]
         if(data_byte==0x21):
             rx_pkt = []
         rx_pkt.append(data_byte)
         if(data_byte==0x23):
-            if(len(rx_pkt)==28):
+            if(len(rx_pkt)==36):
                 # decode_rx_pkt(rx_pkt)
                 print(decode_rx_pkt(rx_pkt))

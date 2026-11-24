@@ -43,7 +43,7 @@ class Com_uart
 {
 public:
 	Com_uart();
-	void init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq);
+	void init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq, uint8_t ddr_id);
 	void com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2);
 	void com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_R, const double w_L);
 

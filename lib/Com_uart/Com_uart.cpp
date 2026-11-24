@@ -4,12 +4,12 @@ Com_uart::Com_uart()
 {
 }
 
-void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq)
+void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq, uint8_t ddr_id)
 {
 	_serial = &serial;
 	_serial->begin(baud);
 	tx_pkt.drive_mode = 0x00;
-	tx_pkt.id = 0x05;
+	tx_pkt.id = ddr_id;
 	com_uart_tx_counter_max = (unsigned long)(main_loop_freq / com_uart_tx_freq);
 	last_t_rx_us = micros();
 	timeout_rx_us = (unsigned long)(timeout_rx_s * 1000000.0);

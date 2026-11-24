@@ -59,7 +59,7 @@ double cmd_2 = 0.0;					    // command 2 received
 
 void setup()
 {
-	comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ);
+	comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ, DDR_ID);
 
 	timer.init(MAIN_LOOP_FREQ);
 
