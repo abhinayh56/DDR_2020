@@ -56,7 +56,7 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 	}
 }
 
-void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_R, const double w_L)
+void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_L, const double w_R)
 {
 	if (com_uart_tx_counter == com_uart_tx_counter_max)
 	{

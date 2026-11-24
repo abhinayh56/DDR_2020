@@ -59,10 +59,10 @@ double Diff_drive_unicycle::get_L()
 	return L;
 }
 
-void Diff_drive_unicycle::uni2ddr(double Vc, double Wc, double &wr, double &wl)
+void Diff_drive_unicycle::uni2ddr(double Vc, double Wc, double &wl, double &wr)
 {
-	wr = (Vc + Wc * L * 0.5) / r;
 	wl = (Vc - Wc * L * 0.5) / r;
+	wr = (Vc + Wc * L * 0.5) / r;
 }
 
 double Diff_drive_unicycle::get_wr(double Vc, double Wc)
@@ -75,18 +75,18 @@ double Diff_drive_unicycle::get_wl(double Vc, double Wc)
 	return (Vc - Wc * L * 0.5) / r;
 }
 
-void Diff_drive_unicycle::ddr2uni(double wr, double wl, double &Vc, double &Wc)
+void Diff_drive_unicycle::ddr2uni(double wl, double wr, double &Vc, double &Wc)
 {
 	Vc = (wr + wl) * r * 0.5;
 	Wc = (wr - wl) * r / L;
 }
 
-double Diff_drive_unicycle::get_Vc(double wr, double wl)
+double Diff_drive_unicycle::get_Vc(double wl, double wr)
 {
 	return (wr + wl) * r * 0.5;
 }
 
-double Diff_drive_unicycle::get_Wc(double wr, double wl)
+double Diff_drive_unicycle::get_Wc(double wl, double wr)
 {
 	return (wr - wl) * r / L;
 }
