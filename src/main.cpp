@@ -108,14 +108,6 @@ void loop()
 	actualSpeedWheel_1_Filt = lpfSpeedWheel_1.update(actualSpeedWheel_1_Unfilt);
 	actualSpeedWheel_2_Filt = lpfSpeedWheel_2.update(actualSpeedWheel_2_Unfilt);
 
-	Serial.print(actualSpeedWheel_1_Unfilt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Unfilt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.println(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-
 	// 1.2. Update odometry
 	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
 
@@ -129,41 +121,51 @@ void loop()
 	// comUart.com_rx(drive_mode, cmd_1, cmd_2);
 
 	// 2.2. Update setpoints based on drive mode and command
-	switch (drive_mode)
+	// switch (drive_mode)
+	// {
+	// case (Drive_mode::NONE):
+	// 	targetSpeedWheel_1 = 0.0;
+	// 	targetSpeedWheel_2 = 0.0;
+	// 	break;
+	// case (Drive_mode::UNICYCLE):
+	// 	targetLinearVelocity_C = cmd_1;
+	// 	targetAngularVelocity_C = cmd_2;
+	// 	ddr_uni.update_domain_vw(targetLinearVelocity_C, targetAngularVelocity_C, targetLinearVelocity_C_new, targetAngularVelocity_C_new);
+	// 	ddr_uni.uni2ddr(targetLinearVelocity_C_new, targetAngularVelocity_C_new, targetSpeedWheel_1, targetSpeedWheel_2);
+	// 	break;
+	// case (Drive_mode::DIFFERENTIAL):
+	// 	targetSpeedWheel_1 = cmd_1;
+	// 	targetSpeedWheel_2 = cmd_2;
+	// 	break;
+	// default:
+	// 	targetSpeedWheel_1 = 0.0;
+	// 	targetSpeedWheel_2 = 0.0;
+	// 	break;
+	// }
+
+	while (Serial.available()>0)
 	{
-	case (Drive_mode::NONE):
-		targetSpeedWheel_1 = 0.0;
-		targetSpeedWheel_2 = 0.0;
-		break;
-	case (Drive_mode::UNICYCLE):
-		targetLinearVelocity_C = cmd_1;
-		targetAngularVelocity_C = cmd_2;
-		ddr_uni.update_domain_vw(targetLinearVelocity_C, targetAngularVelocity_C, targetLinearVelocity_C_new, targetAngularVelocity_C_new);
-		ddr_uni.uni2ddr(targetLinearVelocity_C_new, targetAngularVelocity_C_new, targetSpeedWheel_1, targetSpeedWheel_2);
-		break;
-	case (Drive_mode::DIFFERENTIAL):
-		targetSpeedWheel_1 = cmd_1;
-		targetSpeedWheel_2 = cmd_2;
-		break;
-	default:
-		targetSpeedWheel_1 = 0.0;
-		targetSpeedWheel_2 = 0.0;
-		break;
+		targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
+		targetSpeedWheel_2 = targetSpeedWheel_1;
 	}
 
 	// 3. ====================== Run motor speed controller ======================
-	// targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, 0);
-	// targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, 0);
-	
-	// targetVoltageMotor_1 = 0;
-	// targetVoltageMotor_2 = 0;
+	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, 0);
+	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, 0);
+
+	Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(targetSpeedWheel_2 * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
+	Serial.print(",");
+	Serial.print(targetVoltageMotor_1);
+	Serial.print(",");
+	Serial.println(targetVoltageMotor_2);
 
 	// 4. ============================ Command motors ============================
-	while (Serial.available()>0)
-	{
-		targetVoltageMotor_1 = Serial.readStringUntil('\n').toDouble();
-		targetVoltageMotor_2 = targetVoltageMotor_1;
-	}
 	motorDriver.commandMotorA(targetVoltageMotor_1);
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 

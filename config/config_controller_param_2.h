@@ -9,8 +9,8 @@
 
 #define dt_ODOM    (1.0 / MAIN_LOOP_FREQ)
 
-#define Kp_L       0.0 // 3.5
-#define Ki_L       0.0 // 38.0
+#define Kp_L       1.65 // 1.65
+#define Ki_L       12.0 // 12.0
 #define Kd_L       0.0
 #define dt_L       (1.0 / MAIN_LOOP_FREQ)
 #define I_max_L    (0.75 * V_BAT_MAX * SAFETY_FACTOR)
