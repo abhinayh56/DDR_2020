@@ -1,8 +1,8 @@
 #ifndef CONFIG_ROBOT_PARAM_H
 #define CONFIG_ROBOT_PARAM_H
 
-#define DDR_2020_TYPE_1
-// #define DDR_2020_TYPE_2
+// #define DDR_2020_TYPE_1
+#define DDR_2020_TYPE_2
 
 #if defined(DDR_2020_TYPE_1)
     #include "config_time_1.h"
