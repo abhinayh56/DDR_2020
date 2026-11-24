@@ -27,8 +27,6 @@ ser.timeout = 1.0
 ser.close()
 time.sleep(1)
 
-rx_pkt = []
-
 def decode_rx_pkt(rx_pkt_):
     start, id, t_millis, drive_mode, x, y, th, v, w, end = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     start      = rx_pkt_[0]
@@ -54,108 +52,74 @@ screen = pygame.display.set_mode((400, 300))
 pygame.display.set_caption("Keyboard Input")
 running = True
 
-def crc8(data):
-    polynomial = 0x07
-    crc = 0x00
-    for byte in data:
-        crc ^= byte
-        for _ in range(8):
-            if crc & 0x80:
-                crc = (crc << 1) ^ polynomial
-            else:
-                crc <<= 1
-    return crc & 0xFF
-
 def limit(n, min_val, max_val):
     return max(min_val, min(n, max_val))
 
-def send_command(pwm_L_, pwm_R_):
-    pwm_L = pwm_L_ & (0b1111111111111111)
-    pwm_R = pwm_R_ & (0b1111111111111111)
+def send_command(drive_mode_, cmd_1_, cmd_2_):
 
-    pwm_Lh = pwm_L >> 8
-    pwm_Ll = pwm_L & (0b11111111)
-    pwm_Rh = pwm_R >> 8
-    pwm_Rl = pwm_R & (0b11111111)
+    cmd_1 = tc.REAL_2_byte_4(cmd_1_)
+    cmd_2 = tc.REAL_2_byte_4(cmd_2_)
 
-    tx_pkt = [0x15, 0xEC, 0x00, pwm_Lh, pwm_Ll, pwm_Rh, pwm_Rl, 0x00, 0x04, 0xD2]
+    cmd_1_0 = cmd_1[0]
+    cmd_1_1 = cmd_1[1]
+    cmd_1_2 = cmd_1[2]
+    cmd_1_3 = cmd_1[3]
 
-    crc = crc8(bytearray(tx_pkt[2:7]))
-    tx_pkt[7] = crc
+    cmd_2_0 = cmd_2[0]
+    cmd_2_1 = cmd_2[1]
+    cmd_2_2 = cmd_2[2]
+    cmd_2_3 = cmd_2[3]
+
+    tx_pkt = [0x21, drive_mode_, cmd_1_0, cmd_1_1, cmd_1_2, cmd_1_3, cmd_2_0, cmd_2_1, cmd_2_2, cmd_2_3, 0x23]
 
     tx_pkt = bytearray(tx_pkt)
 
     try:
         ser.write(tx_pkt)
-        print('---> Tx : ', pwm_L_, ',', pwm_R_)
+        print('---> Tx : ', "2", ", ", drive_mode_, ", ", cmd_1_, ', ', cmd_2_)
     except:
-        print('---> Tx : ', 'XXX, XXX')
+        print('---> Tx : ', 'XX_1, XX_2, XX_3')
+
+rx_pkt = []
+
+
+rx_pkt = bytearray()
 
 def receive_command():
-    ser.flushInput()
-    try:
-        rx_pkt = ser.readline()
-        rx_pkt = list(rx_pkt)
-        index_comma = []
-        n = len(rx_pkt)
-        for i in range(0,n):
-            if(rx_pkt[i]==44):
-                index_comma.append(i)
-        # print("index_comma: ", index_comma)
+    global rx_pkt
+    # Read available bytes without blocking
+    data = ser.read(ser.in_waiting)
 
-        hrt_counter_rx = []
-        t_millis_rx = []
-        pwm_l_rx = []
-        pwm_r_rx = []
+    for data_byte in data:
+        # Detect packet start
+        if data_byte == 0x21:
+            rx_pkt = bytearray()
+            rx_pkt.append(data_byte)
+        elif len(rx_pkt) > 0:
+            rx_pkt.append(data_byte)
+            # Detect packet end
+            if data_byte == 0x23:
+                if len(rx_pkt) == 36:
+                    try:
+                        start, id, t, drive_mode, x, y, th, v, w, w_L, w_R, end = decode_rx_pkt(rx_pkt)
+                        print("<--- Rx : ", id, ", ", drive_mode, ", ", v, ", ", w, ", ", t)
+                    except Exception as e:
+                        print("RX Decode Error:", e)
+                        print('<--- Rx : ', 'XX_1, XX_2, XX_3, XX_4, XX_5, XX_6, XX_7, XX_8', "RX Error!")
 
-        for i in range(0,index_comma[0]):
-            hrt_counter_rx.append(rx_pkt[i]-48)
-        for i in range(index_comma[0]+1, index_comma[1]):
-            t_millis_rx.append(rx_pkt[i]-48)
-        for i in range(index_comma[1]+1, index_comma[2]):
-            pwm_l_rx.append(rx_pkt[i]-48)
-        for i in range(index_comma[2]+1, n-1):
-            pwm_r_rx.append(rx_pkt[i]-48)
+                # Reset packet buffer
+                rx_pkt = bytearray()
 
-        hrt_counter_rx_val = 0
-        t_millis_rx_val = 0
-        pwm_l_rx_val = 0
-        pwm_r_rx_val = 0
-
-        for i in range(0,len(hrt_counter_rx)):
-            hrt_counter_rx_val = hrt_counter_rx_val*10 + hrt_counter_rx[i]
-
-        for i in range(0,len(t_millis_rx)):
-            t_millis_rx_val = t_millis_rx_val*10 + t_millis_rx[i]
-
-        pwm_l_rx_is_negative = False
-        for i in range(0,len(pwm_l_rx)):
-            if(pwm_l_rx[i]==(-3)):
-                pwm_l_rx_is_negative = True
-                continue
-            pwm_l_rx_val = pwm_l_rx_val*10 + pwm_l_rx[i]
-        if(pwm_l_rx_is_negative == True):
-            pwm_l_rx_val = -1 * pwm_l_rx_val
-
-        pwm_r_rx_is_negative = False
-        for i in range(0,len(pwm_r_rx)):
-            if(pwm_r_rx[i]==(-3)):
-                pwm_r_rx_is_negative = True
-                continue
-            pwm_r_rx_val = pwm_r_rx_val*10 + pwm_r_rx[i]
-        if(pwm_r_rx_is_negative == True):
-            pwm_r_rx_val = -1 * pwm_r_rx_val
-
-        print('<--- Rx : ', pwm_l_rx_val, ',' , pwm_r_rx_val, ",                 " , hrt_counter_rx_val, ",     ", t_millis_rx_val)
-
-    except:
-        print('<--- Rx : ', 'XXX, XXX', "RX Error!")
+            # Prevent buffer overflow
+            elif len(rx_pkt) > 36:
+                rx_pkt = bytearray()
 
 t0 = time.time()
 
-v, w = int(0), int(0)
+v, w = 0.0, 0.0
 
 while running:
+
     v_input = "0"
     w_input = "0"
 
@@ -167,8 +131,8 @@ while running:
     # Get current keyboard state
     keys = pygame.key.get_pressed()
 
-    dv = 25
-    dw = 25
+    dv = 0.01
+    dw = 0.1
 
     if keys[pygame.K_UP]:
         print("UP")
@@ -186,8 +150,8 @@ while running:
         print("RIGHT")
         w = w - dw
 
-    v = limit(v, -255, 255)
-    w = limit(w, -255, 255)
+    v = limit(v, -0.296, 0.296)
+    w = limit(w, -2.96, 2.96)
 
     # ESC to quit
     if keys[pygame.K_ESCAPE]:
@@ -197,41 +161,21 @@ while running:
     # w_input = input("w: ") # -255, 255
 
     if((v_input == "q") or (w_input == "q") or (running == False)):
-        send_command(int(0), int(0))
+        send_command(0, 0.0, 0.0)
         time.sleep(0.25)
         break
 
     # try:
-    #     v = int(v_input) # -255, 255
-    #     w = int(w_input) # -255, 255
+    #     v = float(v_input) # -255, 255
+    #     w = float(w_input) # -255, 255
     # except:
     #     pass
 
-    Kv = 1.0
-    Kw = 1.0
-
-    pwm_L = int(Kv * v - Kw * w)
-    pwm_R = int(Kv * v + Kw * w)
-
-    send_command(pwm_L, pwm_R)
+    send_command(1, v, w)
     receive_command()
 
     pygame.time.Clock().tick(25)
-    time.sleep(0.01)
+    time.sleep(0.001)
 
 pygame.quit()
 ser.close()
-
-
-# while True:
-#     data_byte_arr = ser.read_all()
-#     # print("data_byte_arr: ", data_byte_arr)
-#     for i in range(0,len(data_byte_arr)):
-#         data_byte = data_byte_arr[i]
-#         if(data_byte==0x21):
-#             rx_pkt = []
-#         rx_pkt.append(data_byte)
-#         if(data_byte==0x23):
-#             if(len(rx_pkt)==36):
-#                 # decode_rx_pkt(rx_pkt)
-#                 print(decode_rx_pkt(rx_pkt))
