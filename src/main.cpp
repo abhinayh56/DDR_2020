@@ -168,9 +168,6 @@ double voltageFFMotor_2 = 0;        // voltage feed forward right motor
 // double cmd_1 = 0.0;					   // command 1 received
 // double cmd_2 = 0.0;					   // command 2 received
 
-// uint64_t t_last = 0;
-// uint64_t t = 0;
-
 void setup()
 {
 	// comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ);
@@ -328,8 +325,4 @@ void loop()
 	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedWheel_2, actualSpeedWheel_1);
 
 	timer.sleep();
-
-	// t = micros();
-	// Serial.println(0);
-	// t_last = t;
 }
