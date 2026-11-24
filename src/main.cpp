@@ -13,7 +13,7 @@
 #include "Diff_drive_unicycle.h"
 #include "../config/config.h"
 
-// Com_uart comUart;
+Com_uart comUart;
 Timer_utils timer(MAIN_LOOP_FREQ);
 L298N motorDriver;
 Quadrature_enc encoder_1;
@@ -59,8 +59,7 @@ double cmd_2 = 0.0;					    // command 2 received
 
 void setup()
 {
-	// comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ, DDR_ID);
-	Serial.begin(COM_UART_0_BAUDRATE);
+	comUart.init(Serial, COM_UART_0_BAUDRATE, TIMEOUT_RX_S, MAIN_LOOP_FREQ, COM_UART_TX_FREQ, DDR_ID);
 	
 	timer.init(MAIN_LOOP_FREQ);
 
@@ -118,59 +117,41 @@ void loop()
 
 	// 2. ========================== Communication (RX) ==========================
 	// 2.1. Get drive mode and command from UART
-	// comUart.com_rx(drive_mode, cmd_1, cmd_2);
+	comUart.com_rx(drive_mode, cmd_1, cmd_2);
 
 	// 2.2. Update setpoints based on drive mode and command
-	// switch (drive_mode)
-	// {
-	// case (Drive_mode::NONE):
-	// 	targetSpeedWheel_1 = 0.0;
-	// 	targetSpeedWheel_2 = 0.0;
-	// 	break;
-	// case (Drive_mode::UNICYCLE):
-	// 	targetLinearVelocity_C = cmd_1;
-	// 	targetAngularVelocity_C = cmd_2;
-	// 	ddr_uni.update_domain_vw(targetLinearVelocity_C, targetAngularVelocity_C, targetLinearVelocity_C_new, targetAngularVelocity_C_new);
-	// 	ddr_uni.uni2ddr(targetLinearVelocity_C_new, targetAngularVelocity_C_new, targetSpeedWheel_1, targetSpeedWheel_2);
-	// 	break;
-	// case (Drive_mode::DIFFERENTIAL):
-	// 	targetSpeedWheel_1 = cmd_1;
-	// 	targetSpeedWheel_2 = cmd_2;
-	// 	break;
-	// default:
-	// 	targetSpeedWheel_1 = 0.0;
-	// 	targetSpeedWheel_2 = 0.0;
-	// 	break;
-	// }
-
-	while (Serial.available()>0)
+	switch (drive_mode)
 	{
-		targetSpeedWheel_1 = Serial.readStringUntil('\n').toDouble() * M_PI / 180.0;
-		targetSpeedWheel_2 = targetSpeedWheel_1;
+	case (Drive_mode::NONE):
+		targetSpeedWheel_1 = 0.0;
+		targetSpeedWheel_2 = 0.0;
+		break;
+	case (Drive_mode::UNICYCLE):
+		targetLinearVelocity_C = cmd_1;
+		targetAngularVelocity_C = cmd_2;
+		ddr_uni.update_domain_vw(targetLinearVelocity_C, targetAngularVelocity_C, targetLinearVelocity_C_new, targetAngularVelocity_C_new);
+		ddr_uni.uni2ddr(targetLinearVelocity_C_new, targetAngularVelocity_C_new, targetSpeedWheel_1, targetSpeedWheel_2);
+		break;
+	case (Drive_mode::DIFFERENTIAL):
+		targetSpeedWheel_1 = cmd_1;
+		targetSpeedWheel_2 = cmd_2;
+		break;
+	default:
+		targetSpeedWheel_1 = 0.0;
+		targetSpeedWheel_2 = 0.0;
+		break;
 	}
 
 	// 3. ====================== Run motor speed controller ======================
 	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, 0);
 	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, 0);
 
-	Serial.print(targetSpeedWheel_1 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetSpeedWheel_2 * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(actualSpeedWheel_2_Filt * 180.0 / M_PI);
-	Serial.print(",");
-	Serial.print(targetVoltageMotor_1);
-	Serial.print(",");
-	Serial.println(targetVoltageMotor_2);
-
 	// 4. ============================ Command motors ============================
 	motorDriver.commandMotorA(targetVoltageMotor_1);
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 
 	// 5. ========================== Communication (TX) ==========================
-	// comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedWheel_1, actualSpeedWheel_2);
+	comUart.com_tx(drive_mode, actualPositionX_C, actualPositionY_C, actualAngle_C, actualLinearVelocity_C, actualAngularVelocity_C, actualSpeedWheel_1, actualSpeedWheel_2);
 
 	timer.sleep();
 }
