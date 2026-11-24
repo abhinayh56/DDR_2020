@@ -108,13 +108,13 @@ void loop()
 	actualSpeedWheel_1_Filt = lpfSpeedWheel_1.update(actualSpeedWheel_1_Unfilt);
 	actualSpeedWheel_2_Filt = lpfSpeedWheel_2.update(actualSpeedWheel_2_Unfilt);
 
-	Serial.print((double)encoder_1.getCount());
+	Serial.print(actualSpeedWheel_1_Unfilt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.print((double)encoder_2.getCount());
+	Serial.print(actualSpeedWheel_2_Unfilt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.print((double)encoder_1.getAngle()*180.0/M_PI);
+	Serial.print(actualSpeedWheel_1_Filt * 180.0 / M_PI);
 	Serial.print(",");
-	Serial.println((double)encoder_2.getAngle()*180.0/M_PI);
+	Serial.println(actualSpeedWheel_2_Filt * 180.0 / M_PI);
 
 	// 1.2. Update odometry
 	wheel_odom.update(encoder_1.getCount(), encoder_2.getCount());
@@ -152,13 +152,18 @@ void loop()
 	}
 
 	// 3. ====================== Run motor speed controller ======================
-	targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, 0);
-	targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, 0);
+	// targetVoltageMotor_1 = controllerMotor_1.update(targetSpeedWheel_1, actualSpeedWheel_1_Filt, 0);
+	// targetVoltageMotor_2 = controllerMotor_2.update(targetSpeedWheel_2, actualSpeedWheel_2_Filt, 0);
 	
-	targetVoltageMotor_1 = 0;
-	targetVoltageMotor_2 = 0;
+	// targetVoltageMotor_1 = 0;
+	// targetVoltageMotor_2 = 0;
 
 	// 4. ============================ Command motors ============================
+	while (Serial.available()>0)
+	{
+		targetVoltageMotor_1 = Serial.readStringUntil('\n').toDouble();
+		targetVoltageMotor_2 = targetVoltageMotor_1;
+	}
 	motorDriver.commandMotorA(targetVoltageMotor_1);
 	motorDriver.commandMotorB(targetVoltageMotor_2);
 
