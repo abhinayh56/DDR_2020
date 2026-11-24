@@ -62,13 +62,13 @@ void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, 
 	{
 		tx_pkt.t_millis = millis();
 		tx_pkt.drive_mode = drive_mode;
-		tx_pkt.x = x;
-		tx_pkt.y = y;
-		tx_pkt.th = th;
-		tx_pkt.v = v;
-		tx_pkt.w = w;
-		tx_pkt.w_R = w_R;
-		tx_pkt.w_L = w_L;
+		tx_pkt.x = (float)x;
+		tx_pkt.y = (float)y;
+		tx_pkt.th = (float)th;
+		tx_pkt.v = (float)v;
+		tx_pkt.w = (float)w;
+		tx_pkt.w_R = (float)w_R;
+		tx_pkt.w_L = (float)w_L;
 		memcpy(tx_buff, &tx_pkt, 36);
 		_serial->write(tx_buff, 36);
 	}

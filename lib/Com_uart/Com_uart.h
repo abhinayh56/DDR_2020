@@ -28,13 +28,13 @@ struct Tx_packet
 	uint8_t id = 0x00;
 	unsigned long t_millis = 0x00;
 	uint8_t drive_mode = 0x00;
-	double x = 0x00;
-	double y = 0x00;
-	double th = 0x00;
-	double v = 0x00;
-	double w = 0x00;
-	double w_R = 0x00;
-	double w_L = 0x00;
+	float x = 0x00;
+	float y = 0x00;
+	float th = 0x00;
+	float v = 0x00;
+	float w = 0x00;
+	float w_R = 0x00;
+	float w_L = 0x00;
 	uint8_t end = 0x23;
 };
 #pragma pack(pop)
