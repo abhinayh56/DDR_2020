@@ -21,10 +21,10 @@
 #define Kp_R       Kp_L
 #define Ki_R       Ki_L
 #define Kd_R       Kd_L
-#define dt_R       (1.0 / MAIN_LOOP_FREQ)
-#define I_max_R    (0.75 * V_BAT_MAX * SAFETY_FACTOR)
-#define u_max_R    (V_BAT_MAX * SAFETY_FACTOR)
-#define D_FILTER_R false
-#define fc_R       (MAIN_LOOP_FREQ * 0.5)
+#define dt_R       dt_L
+#define I_max_R    I_max_L
+#define u_max_R    u_max_L
+#define D_FILTER_R D_FILTER_L
+#define fc_R       fc_L
 
 #endif // CONFIG_CONTROLLER_1_H
