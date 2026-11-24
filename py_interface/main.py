@@ -1,7 +1,7 @@
 import serial
 import type_conversion as tc
 
-port = 'COM7'
+port = 'COM8'
 baudrate = 115200
 timeout = 1.0
 
@@ -30,7 +30,7 @@ def decode_rx_pkt(rx_pkt_):
     w_R        = tc.byte_4_2_FLOAT(rx_pkt_[27:31])
     w_L        = tc.byte_4_2_FLOAT(rx_pkt_[31:35])
     end        = rx_pkt_[27]
-    return start, id, t_millis/1000.0, drive_mode, x, y, th, v, w, w_R, w_L, end
+    return start, id, t_millis/1000.0, drive_mode, x, y, th, v, w, w_L, w_R, end
 
 ser.open()
 
