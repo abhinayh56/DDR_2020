@@ -150,8 +150,14 @@ while running:
         print("RIGHT")
         w = w - dw
 
-    v = limit(v, -0.296, 0.296)
-    w = limit(w, -2.96, 2.96)
+    v_max = 0.185
+    w_max = 1.85
+
+    # v_max = 0.296
+    # w_max = 2.96
+
+    v = limit(v, -v_max, v_max)
+    w = limit(w, -w_max, w_max)
 
     # ESC to quit
     if keys[pygame.K_ESCAPE]:
