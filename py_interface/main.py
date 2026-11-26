@@ -119,10 +119,6 @@ t0 = time.time()
 v, w = 0.0, 0.0
 
 while running:
-
-    v_input = "0"
-    w_input = "0"
-
     # Process pygame events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -163,19 +159,10 @@ while running:
     if keys[pygame.K_ESCAPE]:
         running = False
 
-    # v_input = input("v: ") # -255, 255
-    # w_input = input("w: ") # -255, 255
-
-    if((v_input == "q") or (w_input == "q") or (running == False)):
+    if(not running):
         send_command(0, 0.0, 0.0)
         time.sleep(0.25)
         break
-
-    # try:
-    #     v = float(v_input) # -255, 255
-    #     w = float(w_input) # -255, 255
-    # except:
-    #     pass
 
     send_command(1, v, w)
     receive_command()

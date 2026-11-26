@@ -4,7 +4,7 @@ Com_uart::Com_uart()
 {
 }
 
-void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq, uint8_t ddr_id)
+void Com_uart::init(HardwareSerial &serial, unsigned long baud, float timeout_rx_s, float main_loop_freq, float com_uart_tx_freq, uint8_t ddr_id)
 {
 	_serial = &serial;
 	_serial->begin(baud);
@@ -15,7 +15,7 @@ void Com_uart::init(HardwareSerial &serial, unsigned long baud, double timeout_r
 	timeout_rx_us = (unsigned long)(timeout_rx_s * 1000000.0);
 }
 
-void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
+void Com_uart::com_rx(uint8_t &drive_mode, float &cmd_1, float &cmd_2)
 {
 	// start_byte, drive_mode, data_1, data_2, end_byte
 	while (_serial->available())
@@ -56,7 +56,7 @@ void Com_uart::com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2)
 	}
 }
 
-void Com_uart::com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_L, const double w_R)
+void Com_uart::com_tx(const uint8_t drive_mode, const float x, const float y, const float th, const float v, const float w, const float w_L, const float w_R)
 {
 	if (com_uart_tx_counter == com_uart_tx_counter_max)
 	{

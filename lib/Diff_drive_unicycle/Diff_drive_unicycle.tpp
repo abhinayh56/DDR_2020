@@ -1,100 +1,118 @@
 #include "Diff_drive_unicycle.h"
 
-Diff_drive_unicycle::Diff_drive_unicycle()
+template <typename T>
+Diff_drive_unicycle<T>::Diff_drive_unicycle()
 {
 }
 
-void Diff_drive_unicycle::set_param(double L_, double r_)
+template <typename T>
+void Diff_drive_unicycle<T>::set_param(T L_, T r_)
 {
 	L = L_;
 	r = r_;
 }
 
-void Diff_drive_unicycle::set_v_max(double V_max_)
+template <typename T>
+void Diff_drive_unicycle<T>::set_v_max(T V_max_)
 {
 	V_max = V_max_;
 	w_lr_max = V_max / r;
 	W_max = 2.0 * V_max / L;
 }
 
-void Diff_drive_unicycle::set_w_max(double W_max_)
+template <typename T>
+void Diff_drive_unicycle<T>::set_w_max(T W_max_)
 {
 	W_max = W_max_;
 	V_max = W_max * L / 2.0;
 	w_lr_max = V_max / r;
 }
 
-double Diff_drive_unicycle::get_v_max()
+template <typename T>
+T Diff_drive_unicycle<T>::get_v_max()
 {
 	return V_max;
 }
 
-double Diff_drive_unicycle::get_w_max()
+template <typename T>
+T Diff_drive_unicycle<T>::get_w_max()
 {
 	return W_max;
 }
 
-double Diff_drive_unicycle::get_wlr_max()
+template <typename T>
+T Diff_drive_unicycle<T>::get_wlr_max()
 {
 	return w_lr_max;
 }
 
-void Diff_drive_unicycle::set_r(double r_)
+template <typename T>
+void Diff_drive_unicycle<T>::set_r(T r_)
 {
 	r = r_;
 }
 
-void Diff_drive_unicycle::set_L(double L_)
+template <typename T>
+void Diff_drive_unicycle<T>::set_L(T L_)
 {
 	L = L_;
 }
 
-double Diff_drive_unicycle::get_r()
+template <typename T>
+T Diff_drive_unicycle<T>::get_r()
 {
 	return r;
 }
 
-double Diff_drive_unicycle::get_L()
+template <typename T>
+T Diff_drive_unicycle<T>::get_L()
 {
 	return L;
 }
 
-void Diff_drive_unicycle::uni2ddr(double Vc, double Wc, double &wl, double &wr)
+template <typename T>
+void Diff_drive_unicycle<T>::uni2ddr(T Vc, T Wc, T &wl, T &wr)
 {
 	wl = (Vc - Wc * L * 0.5) / r;
 	wr = (Vc + Wc * L * 0.5) / r;
 }
 
-double Diff_drive_unicycle::get_wr(double Vc, double Wc)
+template <typename T>
+T Diff_drive_unicycle<T>::get_wr(T Vc, T Wc)
 {
 	return (Vc + Wc * L * 0.5) / r;
 }
 
-double Diff_drive_unicycle::get_wl(double Vc, double Wc)
+template <typename T>
+T Diff_drive_unicycle<T>::get_wl(T Vc, T Wc)
 {
 	return (Vc - Wc * L * 0.5) / r;
 }
 
-void Diff_drive_unicycle::ddr2uni(double wl, double wr, double &Vc, double &Wc)
+template <typename T>
+void Diff_drive_unicycle<T>::ddr2uni(T wl, T wr, T &Vc, T &Wc)
 {
 	Vc = (wr + wl) * r * 0.5;
 	Wc = (wr - wl) * r / L;
 }
 
-double Diff_drive_unicycle::get_Vc(double wl, double wr)
+template <typename T>
+T Diff_drive_unicycle<T>::get_Vc(T wl, T wr)
 {
 	return (wr + wl) * r * 0.5;
 }
 
-double Diff_drive_unicycle::get_Wc(double wl, double wr)
+template <typename T>
+T Diff_drive_unicycle<T>::get_Wc(T wl, T wr)
 {
 	return (wr - wl) * r / L;
 }
 
-void Diff_drive_unicycle::update_domain_vw(double V_in, double W_in, double &V_out, double &W_out)
+template <typename T>
+void Diff_drive_unicycle<T>::update_domain_vw(T V_in, T W_in, T &V_out, T &W_out)
 {
-	double V_n = V_in;
-	double W_n = W_in;
+	T V_n = V_in;
+	T W_n = W_in;
 
 	int region = 0;
 

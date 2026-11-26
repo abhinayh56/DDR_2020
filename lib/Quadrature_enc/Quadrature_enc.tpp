@@ -1,10 +1,12 @@
 #include "Quadrature_enc.h"
 
-Quadrature_enc::Quadrature_enc()
+template <typename T>
+Quadrature_enc<T>::Quadrature_enc()
 {
 }
 
-void Quadrature_enc::config(uint64_t cprOutput, int pinA, int pinB, void (*isrHandler)(void), bool reverse)
+template <typename T>
+void Quadrature_enc<T>::config(uint64_t cprOutput, int pinA, int pinB, void (*isrHandler)(void), bool reverse)
 {
     m_cprOutput = cprOutput;
     m_pinA = pinA;
@@ -13,7 +15,8 @@ void Quadrature_enc::config(uint64_t cprOutput, int pinA, int pinB, void (*isrHa
     m_isrHandler = isrHandler;
 }
 
-void Quadrature_enc::init()
+template <typename T>
+void Quadrature_enc<T>::init()
 {
 
     pinMode(m_pinA, INPUT);
@@ -29,7 +32,8 @@ void Quadrature_enc::init()
     attachInterrupt(digitalPinToInterrupt(m_pinB), m_isrHandler, CHANGE);
 }
 
-void Quadrature_enc::isrFunction()
+template <typename T>
+void Quadrature_enc<T>::isrFunction()
 {
     a = digitalRead(m_pinA);
     b = digitalRead(m_pinB);
@@ -63,36 +67,40 @@ void Quadrature_enc::isrFunction()
     b_prev = b;
 }
 
-void Quadrature_enc::update()
+template <typename T>
+void Quadrature_enc<T>::update()
 {
     noInterrupts();
     m_count_temp = m_count;
     interrupts();
 
-    m_angle = static_cast<double>(m_count_temp) / static_cast<double>(m_cprOutput) * 2.0 * M_PI;
+    m_angle = static_cast<T>(m_count_temp) / static_cast<T>(m_cprOutput) * 2.0 * M_PI;
     m_time = micros();
 
     uint64_t dt = m_time - m_timePrev;
     if (dt > 0)
     {
-        m_angularSpeed = (m_angle - m_anglePrev) * 1e6 / (static_cast<double>(dt));
+        m_angularSpeed = (m_angle - m_anglePrev) * 1e6 / (static_cast<T>(dt));
     }
 
     m_anglePrev = m_angle;
     m_timePrev = m_time;
 }
 
-int64_t Quadrature_enc::getCount()
+template <typename T>
+int64_t Quadrature_enc<T>::getCount()
 {
     return m_count_temp * ((m_reverse == true) ? -1 : 1);
 }
 
-double Quadrature_enc::getAngle()
+template <typename T>
+T Quadrature_enc<T>::getAngle()
 {
     return m_angle * ((m_reverse == true) ? -1 : 1);
 }
 
-double Quadrature_enc::getAngularSpeed()
+template <typename T>
+T Quadrature_enc<T>::getAngularSpeed()
 {
     return m_angularSpeed * ((m_reverse == true) ? -1 : 1);
 }

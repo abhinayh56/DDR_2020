@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+template <typename T>
 class L298N
 {
 public:
@@ -11,7 +12,7 @@ public:
 
   ~L298N();
 
-  void config(double voltInDriver, uint16_t pwmMax);
+  void config(T voltInDriver, uint16_t pwmMax);
 
   void configMotorA(uint8_t pinPWM_A, uint8_t pinINA_1, uint8_t pinINA_2, bool reverse);
 
@@ -31,9 +32,9 @@ public:
 
   void enableMotorB();
 
-  void commandMotorA(double voltInMotorA);
+  void commandMotorA(T voltInMotorA);
 
-  void commandMotorB(double voltInMotorB);
+  void commandMotorB(T voltInMotorB);
 
   void eStopDrive();
 
@@ -51,9 +52,11 @@ private:
   bool m_reverseMotorA;
   bool m_reverseMotorB;
 
-  double m_voltInDriver;
+  T m_voltInDriver;
 
   uint16_t m_pwmMax;
 };
+
+#include "L298N.tpp"
 
 #endif  // L298N_H

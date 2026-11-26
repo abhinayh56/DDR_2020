@@ -13,7 +13,7 @@
 
 #define ENC_PPR        3
 #define MOT_GEAR_RATIO 141.0
-#define MOT_SHAFT_CPR  static_cast<uint64_t>(4.0 * static_cast<double>(ENC_PPR) * static_cast<double>(MOT_GEAR_RATIO)) // (PPR*2)*2*N // 1692
+#define MOT_SHAFT_CPR  static_cast<uint64_t>(4.0 * static_cast<float>(ENC_PPR) * static_cast<float>(MOT_GEAR_RATIO)) // (PPR*2)*2*N // 1692
 #define PWM_MAX        255.0
 
 #endif // CONFIG_ROBOT_SPECS_1_H

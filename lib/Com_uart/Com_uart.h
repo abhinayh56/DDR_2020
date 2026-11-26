@@ -15,8 +15,8 @@ struct Rx_packet
 {
 	uint8_t start = 0x21;
 	uint8_t drive_mode = 0x00;
-	double cmd_1 = 0x00;
-	double cmd_2 = 0x00;
+	float cmd_1 = 0x00;
+	float cmd_2 = 0x00;
 	uint8_t end = 0x23;
 };
 #pragma pack(pop)
@@ -43,9 +43,9 @@ class Com_uart
 {
 public:
 	Com_uart();
-	void init(HardwareSerial &serial, unsigned long baud, double timeout_rx_s, double main_loop_freq, double com_uart_tx_freq, uint8_t ddr_id);
-	void com_rx(uint8_t &drive_mode, double &cmd_1, double &cmd_2);
-	void com_tx(const uint8_t drive_mode, const double x, const double y, const double th, const double v, const double w, const double w_R, const double w_L);
+	void init(HardwareSerial &serial, unsigned long baud, float timeout_rx_s, float main_loop_freq, float com_uart_tx_freq, uint8_t ddr_id);
+	void com_rx(uint8_t &drive_mode, float &cmd_1, float &cmd_2);
+	void com_tx(const uint8_t drive_mode, const float x, const float y, const float th, const float v, const float w, const float w_R, const float w_L);
 
 private:
 	HardwareSerial *_serial;
@@ -56,12 +56,12 @@ private:
 	uint8_t tx_buff[36];
 
 	unsigned long com_uart_tx_counter = 1;
-	double main_loop_freq = 100.0;
-	double com_uart_tx_freq = 1.0;
+	float main_loop_freq = 100.0;
+	float com_uart_tx_freq = 1.0;
 	unsigned long com_uart_tx_counter_max = 1;
 	uint8_t rx_buff_index = 0;
 
-	double last_t_rx_us = 0.0;
+	float last_t_rx_us = 0.0;
 	unsigned long timeout_rx_us = 0.0;
 };
 

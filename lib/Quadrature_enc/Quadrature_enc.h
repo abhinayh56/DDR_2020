@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <Arduino.h>
 
+template <typename T>
 class Quadrature_enc
 {
 public:
@@ -19,9 +20,9 @@ public:
 
     int64_t getCount();
 
-    double getAngle();
+    T getAngle();
 
-    double getAngularSpeed();
+    T getAngularSpeed();
 
 private:
     uint64_t m_cprOutput;
@@ -38,11 +39,13 @@ private:
 
     int64_t m_count_temp = 0;
 
-    double m_angle = 0;
-    double m_anglePrev = 0;
-    double m_angularSpeed = 0;
+    T m_angle = 0;
+    T m_anglePrev = 0;
+    T m_angularSpeed = 0;
     uint64_t m_time = 0;
     uint64_t m_timePrev = 0;
 };
+
+#include "Quadrature_enc.tpp"
 
 #endif // QUADRATURE_ENC

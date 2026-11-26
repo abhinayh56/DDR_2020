@@ -1,48 +1,52 @@
-#ifndef BASIC_FUNCTIONS
-#define BASIC_FUNCTIONS
+#ifndef BASIC_FUNCTIONS_H
+#define BASIC_FUNCTIONS_H
 
 #include "math.h"
 #include "Constants.h"
 
+template <typename T>
 class Math_functions
 {
 public:
-	float saturate(float x, float x_min, float x_max);
-	float mod(float x);
-	float sign(float x);
-	int great_int(float x);
-	float ceil(float x);
-	float floor(float x);
-	float wrap(float x, float a, float b);
-	float apply_deadband(float x, float deadband);
-	float apply_deadband2(float x, float deadband);
+	T saturate(T x, T x_min, T x_max);
+	T mod(T x);
+	T sign(T x);
+	int great_int(T x);
+	T ceil(T x);
+	T floor(T x);
+	T wrap(T x, T a, T b);
+	T apply_deadband(T x, T deadband);
+	T apply_deadband2(T x, T deadband);
 
-	float rad_2_deg(float x);
-	float deg_2_rad(float x);
-	float rps_2_rpm(float rps);
-	float rpm_2_rps(float rpm);
+	T rad_2_deg(T x);
+	T deg_2_rad(T x);
+	T rps_2_rpm(T rps);
+	T rpm_2_rps(T rpm);
 
-	float linear_map(float x, float x1, float x2, float y1, float y2);
-	float poly_map_deg1(float x, float a0, float a1);
-	float poly_map_deg2(float x, float a0, float a1, float a2);
-	float poly_map_deg3(float x, float a0, float a1, float a2, float a3);
-	float poly_map_deg4(float x, float a0, float a1, float a2, float a3, float a4);
-	float poly_map_deg5(float x, float a0, float a1, float a2, float a3, float a4, float a5);
-	float poly_map_deg6(float x, float a0, float a1, float a2, float a3, float a4, float a5, float a6);
-	float poly_map_degn(float x, float a[], int n);
+	T linear_map(T x, T x1, T x2, T y1, T y2);
+	T poly_map_deg1(T x, T a0, T a1);
+	T poly_map_deg2(T x, T a0, T a1, T a2);
+	T poly_map_deg3(T x, T a0, T a1, T a2, T a3);
+	T poly_map_deg4(T x, T a0, T a1, T a2, T a3, T a4);
+	T poly_map_deg5(T x, T a0, T a1, T a2, T a3, T a4, T a5);
+	T poly_map_deg6(T x, T a0, T a1, T a2, T a3, T a4, T a5, T a6);
+	T poly_map_degn(T x, T a[], int n);
 
-	bool points_AB_line_same_side(float x, float y, float x0, float y0, float x1, float y1, float x2, float y2);
-	bool points_A0_line_same_side(float x, float y, float x1, float y1, float x2, float y2);
+	bool points_AB_line_same_side(T x, T y, T x0, T y0, T x1, T y1, T x2, T y2);
+	bool points_A0_line_same_side(T x, T y, T x1, T y1, T x2, T y2);
 };
 
+template <typename T>
 class Circle
 {
 public:
 	Circle();
 	~Circle();
-	bool inside(float xc, float yc, float r, float x0, float y0);
-	void intersection_line(float xc, float yc, float r, float x1, float y1, float x2, float y2, float *x10, float *y10, float *x20, float *y20);
-	void intersection_circle(float c1x, float c1y, float r1, float c2x, float c2y, float r2, float *x01, float *y01, float *x02, float *y02);
+	bool inside(T xc, T yc, T r, T x0, T y0);
+	void intersection_line(T xc, T yc, T r, T x1, T y1, T x2, T y2, T *x10, T *y10, T *x20, T *y20);
+	void intersection_circle(T c1x, T c1y, T r1, T c2x, T c2y, T r2, T *x01, T *y01, T *x02, T *y02);
 };
+
+#include "Math_functions.tpp"
 
 #endif

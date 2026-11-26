@@ -14,48 +14,48 @@
 #include "../config/config.h"
 
 Com_uart comUart;
-Timer_utils timer(MAIN_LOOP_FREQ);
-L298N motorDriver;
-Quadrature_enc encoder_1;
-Quadrature_enc encoder_2;
+Timer_utils<float> timer(MAIN_LOOP_FREQ);
+L298N<float> motorDriver;
+Quadrature_enc<float> encoder_1;
+Quadrature_enc<float> encoder_2;
 
-LPF_1<double> lpfSpeedWheel_1;
-LPF_1<double> lpfSpeedWheel_2;
+LPF_1<float> lpfSpeedWheel_1;
+LPF_1<float> lpfSpeedWheel_2;
 
-PID_P<double> controllerMotor_1;
-PID_P<double> controllerMotor_2;
+PID_P<float> controllerMotor_1;
+PID_P<float> controllerMotor_2;
 
-double actualSpeedWheel_1_Unfilt  = 0.0;
-double actualSpeedWheel_2_Unfilt  = 0.0;
-double actualSpeedWheel_1_Filt = 0.0;
-double actualSpeedWheel_2_Filt = 0.0;
+float actualSpeedWheel_1_Unfilt  = 0.0;
+float actualSpeedWheel_2_Unfilt  = 0.0;
+float actualSpeedWheel_1_Filt = 0.0;
+float actualSpeedWheel_2_Filt = 0.0;
 
-Wheel_odom wheel_odom;
-Diff_drive_unicycle ddr_uni;
+Wheel_odom<float> wheel_odom;
+Diff_drive_unicycle<float> ddr_uni;
 
 // feedback variables
-double actualPositionX_C = 0;	    // x coordinate of the robot
-double actualPositionY_C = 0;	    // y coordinate of the robot
-double actualAngle_C = 0;	        // orientation of the robot
-double actualLinearVelocity_C = 0;  // linear velocity of the robot
-double actualAngularVelocity_C = 0; // angular velocity of the robot
-double actualSpeedWheel_2 = 0;      // angular velocity of right wheel
-double actualSpeedWheel_1 = 0;      // angular velocity of left wheel
+float actualPositionX_C = 0;	    // x coordinate of the robot
+float actualPositionY_C = 0;	    // y coordinate of the robot
+float actualAngle_C = 0;	        // orientation of the robot
+float actualLinearVelocity_C = 0;  // linear velocity of the robot
+float actualAngularVelocity_C = 0; // angular velocity of the robot
+float actualSpeedWheel_2 = 0;      // angular velocity of right wheel
+float actualSpeedWheel_1 = 0;      // angular velocity of left wheel
 
 // setpoint variables
-double targetLinearVelocity_C = 0;      // robot linear velocity setpoint
-double targetAngularVelocity_C = 0;     // robot  angular velocity setpoint
-double targetLinearVelocity_C_new = 0;  // robot linear velocity setpoint
-double targetAngularVelocity_C_new = 0; // robot  angular velocity setpoint
-double targetSpeedWheel_1 = 0;          // angular velocity setpoint left wheel
-double targetSpeedWheel_2 = 0;          // angular velocity setpoint right wheel
-double targetVoltageMotor_1 = 0;        // voltage setpoint left motor
-double targetVoltageMotor_2 = 0;        // voltage setpoint right motor
+float targetLinearVelocity_C = 0;      // robot linear velocity setpoint
+float targetAngularVelocity_C = 0;     // robot  angular velocity setpoint
+float targetLinearVelocity_C_new = 0;  // robot linear velocity setpoint
+float targetAngularVelocity_C_new = 0; // robot  angular velocity setpoint
+float targetSpeedWheel_1 = 0;          // angular velocity setpoint left wheel
+float targetSpeedWheel_2 = 0;          // angular velocity setpoint right wheel
+float targetVoltageMotor_1 = 0;        // voltage setpoint left motor
+float targetVoltageMotor_2 = 0;        // voltage setpoint right motor
 
 // communication variables
 uint8_t drive_mode = Drive_mode::NONE;  // drive mode received
-double cmd_1 = 0.0;					    // command 1 received
-double cmd_2 = 0.0;					    // command 2 received
+float cmd_1 = 0.0;					    // command 1 received
+float cmd_2 = 0.0;					    // command 2 received
 
 void setup()
 {
